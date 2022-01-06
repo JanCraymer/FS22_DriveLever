@@ -14,6 +14,7 @@ function DrivingStickCruiseControl:onLoad(savegame)
     spec.accelerateInputValue = 0
     spec.decelerateInputValue = 0
     spec.accelerationEnabled = true
+    spec.decelerationEnabled = true
     spec.accelerateAxisThreshold = 0.5
     spec.decelerateAxisThreshold = 0.5
 
@@ -123,7 +124,8 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                                 self:brakeToStop()
                             end
                             spec.targetSpeed = 0
-                        elseif spec.decelerateInputValue > 0 then
+                            spec.decelerationEnabled = false
+                        elseif spec.decelerateInputValue > 0 and spec.decelerationEnabled then
                             spec.targetSpeed = spec.targetSpeed - 1
                         elseif spec.accelerateInputValue > spec.accelerateAxisThreshold then
                             if spec.savedSpeed < 1 then
@@ -156,6 +158,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                 else
                     spec.inputDelayCurrent = 0
                     spec.accelerationEnabled = true
+                    spec.decelerationEnabled = true
                 end
 
             end

@@ -6,7 +6,7 @@ function DrivingStickCruiseControl.prerequisitesPresent(specializations)
 end
 
 function DrivingStickCruiseControl:onLoad(savegame)
-    print("DrivingStickCruiseControl:onLoad")
+    -- print("DrivingStickCruiseControl:onLoad")
     self.spec_drivingStickCruiseControl = self[("spec_%s.drivingStickCruiseControl"):format(DrivingStickCruiseControl.modName)]
     local spec = self.spec_drivingStickCruiseControl
 
@@ -28,7 +28,7 @@ function DrivingStickCruiseControl:onLoad(savegame)
 end
 
 function DrivingStickCruiseControl.registerEventListeners(vehicleType)
-    print("DrivingStickCruiseControl.registerEventListeners");    
+    -- print("DrivingStickCruiseControl.registerEventListeners");    
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", DrivingStickCruiseControl);
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", DrivingStickCruiseControl);
     SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", DrivingStickCruiseControl);
@@ -36,7 +36,7 @@ function DrivingStickCruiseControl.registerEventListeners(vehicleType)
 end
 
 function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
-    print("DrivingStickCruiseControl.onRegisterActionEvents");
+    -- print("DrivingStickCruiseControl.onRegisterActionEvents");
 
     if self.isClient then
         local spec = self.spec_drivingStickCruiseControl
@@ -86,26 +86,26 @@ function DrivingStickCruiseControl:actionEventSaveCurrentCruiseControlSpeed(acti
 end
 
 function DrivingStickCruiseControl:toggle(self)
-    print("DrivingStickCruiseControl:toggle")
+    -- print("DrivingStickCruiseControl:toggle")
     local spec = self.spec_drivingStickCruiseControl
     spec.active = not spec.active
-    print(spec.active)
+    -- print(spec.active)
 end
 
 function DrivingStickCruiseControl:saveCurrentCruiseControlSpeed(self)
-    print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed")
-    print(self.isClient)
+    -- print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed")
+    -- print(self.isClient)
     local spec = self.spec_drivingStickCruiseControl
-    print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed isClient")
+    -- print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed isClient")
     if self.isActiveForInputIgnoreSelectionIgnoreAI then
-        print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed isActiveForInputIgnoreSelectionIgnoreAI")
+        -- print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed isActiveForInputIgnoreSelectionIgnoreAI")
         if self:getIsVehicleControlledByPlayer() then 
             if spec.savedSpeed == 0 then
                 spec.savedSpeed = self:getCruiseControlSpeed()
             else
                 spec.savedSpeed = 0
             end
-            print("Saved Speed: " .. spec.savedSpeed)
+            -- print("Saved Speed: " .. spec.savedSpeed)
         end
     end        
 end
@@ -123,7 +123,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
                 if spec.switchDirectionInputValue > 0.3 and spec.active then
                     if spec.switchDirectionEnabled then                
-                        print("switch direction")            
+                        -- print("switch direction")            
                         spec.switchDirectionEnabled = false
         
                         local motor = self.spec_motorized.motor
@@ -149,14 +149,14 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                     if spec.inputDelayCurrent < 0 then
                         spec.inputDelayCurrent = spec.inputDelay
 
-                        print("spec.accelerateInputValue" .. spec.accelerateInputValue)
-                        print("spec.decelerateInputValue" .. spec.decelerateInputValue)
+                        -- print("spec.accelerateInputValue" .. spec.accelerateInputValue)
+                        -- print("spec.decelerateInputValue" .. spec.decelerateInputValue)
                         -- print("self.movingDirection" .. self.movingDirection)
-                        print("lastSpeed: " .. self:getLastSpeed())
+                        -- print("lastSpeed: " .. self:getLastSpeed())
 
 
                         if spec.decelerateInputValue > spec.decelerateAxisThreshold then
-                            print("brakeToStop")
+                            -- print("brakeToStop")
                             self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_OFF)
                             if self.movingDirection >= 0 then -- workaround for strange behavior while driving backwards
                                 self:brakeToStop()
@@ -180,10 +180,10 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                             end
                         end
 
-                        print("targetSpeed " .. spec.targetSpeed)
+                        -- print("targetSpeed " .. spec.targetSpeed)
 
                         if spec.targetSpeed > 0 then
-                            print("self:getCruiseControlMaxSpeed() " .. self:getCruiseControlMaxSpeed())
+                            -- print("self:getCruiseControlMaxSpeed() " .. self:getCruiseControlMaxSpeed())
                             if spec.targetSpeed > self:getCruiseControlMaxSpeed() then 
                                 spec.targetSpeed = self:getCruiseControlMaxSpeed()
                             end

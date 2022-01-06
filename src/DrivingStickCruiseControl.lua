@@ -30,6 +30,7 @@ function DrivingStickCruiseControl.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", DrivingStickCruiseControl);
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", DrivingStickCruiseControl);
     SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", DrivingStickCruiseControl);
+    SpecializationUtil.registerEventListener(vehicleType, "onDraw", DrivingStickCruiseControl);
 end
 
 function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
@@ -206,3 +207,25 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
 end
 
+function DrivingStickCruiseControl:onDraw(isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
+    local spec = self.spec_drivingStickCruiseControl
+    if spec.active then
+        local baseX, baseY = g_currentMission.inGameMenu.hud.speedMeter.cruiseControlElement:getPosition()
+        local textSize = g_currentMission.inGameMenu.hud.speedMeter.cruiseControlTextSize * 0.7
+        -- print("basex: " .. baseX .. " baseY: " .. baseY)
+        -- local x = baseX - (textSize * 0.5)
+        -- local y = baseY
+
+        local x = baseX + (g_currentMission.inGameMenu.hud.speedMeter.cruiseControlElement:getWidth())
+        local y = baseY - (textSize * 0.8)
+        
+        -- setTextColor(1,1,1,0.5)
+        setTextColor(0.000300, 0.564700 , 0.982200, 1)
+        setTextAlignment(RenderText.ALIGN_CENTER)
+        setTextBold(true)
+        -- setTextColor(unpack(g_currentMission.inGameMenu.hud.speedMeter.cruiseControlColor))
+        
+        local maxSpeedText = spec.savedSpeed > 0 and spec.savedSpeed or self:getCruiseControlMaxSpeed()
+        renderText(x, y , textSize, "max " .. tostring(maxSpeedText))
+    end
+end

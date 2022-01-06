@@ -44,10 +44,6 @@ function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isAc
 
         spec.targetSpeed = 0
 
-        -- if self.getIsEntered ~= nil then
-        --     entered = self:getIsEntered()
-        -- end
-
         local triggerUp, triggerDown, triggerAlways, startActive, callbackState, disableConflictingBindings = false, true, false, true, nil, true
         local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_TOGGLE, self, DrivingStickCruiseControl.actionEventToggle, false, true, false, true, nil, true)
         g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
@@ -220,9 +216,6 @@ function DrivingStickCruiseControl:onDraw(isActiveForInput, isActiveForInputIgno
     if spec.active then
         local baseX, baseY = g_currentMission.inGameMenu.hud.speedMeter.cruiseControlElement:getPosition()
         local textSize = g_currentMission.inGameMenu.hud.speedMeter.cruiseControlTextSize * 0.7
-        -- print("basex: " .. baseX .. " baseY: " .. baseY)
-        -- local x = baseX - (textSize * 0.5)
-        -- local y = baseY
 
         local x = baseX + (g_currentMission.inGameMenu.hud.speedMeter.cruiseControlElement:getWidth())
         local y = baseY - (textSize * 0.8)
@@ -231,7 +224,6 @@ function DrivingStickCruiseControl:onDraw(isActiveForInput, isActiveForInputIgno
         setTextColor(0.000300, 0.564700 , 0.982200, 1)
         setTextAlignment(RenderText.ALIGN_CENTER)
         setTextBold(true)
-        -- setTextColor(unpack(g_currentMission.inGameMenu.hud.speedMeter.cruiseControlColor))
         
         local maxSpeedText = spec.savedSpeed > 0 and spec.savedSpeed or self:getCruiseControlMaxSpeed()
         renderText(x, y , textSize, "max " .. tostring(maxSpeedText))

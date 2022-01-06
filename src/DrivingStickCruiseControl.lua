@@ -10,6 +10,7 @@ function DrivingStickCruiseControl:onLoad(savegame)
     self.spec_drivingStickCruiseControl = self[("spec_%s.drivingStickCruiseControl"):format(DrivingStickCruiseControl.modName)]
     local spec = self.spec_drivingStickCruiseControl
 
+    spec.active = false
     spec.savedSpeed = 0
     spec.accelerateInputValue = 0
     spec.decelerateInputValue = 0
@@ -43,7 +44,7 @@ function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isAc
         -- end
 
         local triggerUp, triggerDown, triggerAlways, startActive, callbackState, disableConflictingBindings = false, true, false, true, nil, true
-        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_TOGGLE_CRUISECONTROL, self, DrivingStickCruiseControl.actionEventToggle, false, true, true, true, nil, true)
+        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_TOGGLE, self, DrivingStickCruiseControl.actionEventToggle, false, true, false, true, nil, true)
         g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
         local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_ACCELERATE, self, DrivingStickCruiseControl.actionEventAccelerate, false, true, true, true, nil, true)
         g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
@@ -52,6 +53,10 @@ function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isAc
         local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED, self, DrivingStickCruiseControl.actionEventSaveCurrentCruiseControlSpeed, false, true, false, true, nil, true)
         g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
     end
+end
+
+function DrivingStickCruiseControl:actionEventToggle(actionName, inputValue, callbackState, isAnalog)
+    DrivingStickCruiseControl:toggle(self)
 end
 
 function DrivingStickCruiseControl:actionEventAccelerate(actionName, inputValue, callbackState, isAnalog)
@@ -65,8 +70,14 @@ function DrivingStickCruiseControl:actionEventDecelerate(actionName, inputValue,
 end
 
 function DrivingStickCruiseControl:actionEventSaveCurrentCruiseControlSpeed(actionName, inputValue, callbackState, isAnalog)
-    print("DrivingStickCruiseControl:actionEventSaveCurrentCruiseControlSpeed")
     DrivingStickCruiseControl:saveCurrentCruiseControlSpeed(self)
+end
+
+function DrivingStickCruiseControl:toggle(self)
+    print("DrivingStickCruiseControl:toggle")
+    local spec = self.spec_drivingStickCruiseControl
+    spec.active = not spec.active
+    print(spec.active)
 end
 
 function DrivingStickCruiseControl:saveCurrentCruiseControlSpeed(self)
@@ -96,7 +107,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
             if self:getIsVehicleControlledByPlayer() then 
-                if spec.accelerateInputValue > 0.1 or spec.decelerateInputValue > 0.1 then -- 10% axis deadzone
+                if (spec.accelerateInputValue > 0.1 or spec.decelerateInputValue > 0.1) and spec.active then -- 10% axis deadzone
                     if self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then 
                         if self:getLastSpeed() > 1 then
                             spec.targetSpeed = math.floor(self:getLastSpeed())

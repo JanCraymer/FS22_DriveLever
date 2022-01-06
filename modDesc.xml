@@ -17,16 +17,6 @@
         <sourceFile filename="src/main.lua"/>
     </extraSourceFiles>
 
-	<!-- <extraSourceFiles>
-        <sourceFile filename="AddSpecialization.lua"/>
-    </extraSourceFiles>
-	
-	<addSpecialization>
-		<specialization name="DrivingStick" className="DrivingStick" filename="DrivingStick.lua" debug="false">
-			<restrictions 	  state="0"		name="Drivable" />
-		</specialization>
-	</addSpecialization> -->
-
     <actions>
 		<action name="DRIVING_STICK_TOGGLE" axisType="HALF" />
         <action name="DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
@@ -36,16 +26,33 @@
 	</actions>
 
 	<inputBinding>
-		<actionBinding action="DRIVING_STICK_TOGGLE">
-			<!-- <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_t" /> -->
-		</actionBinding>
+		<actionBinding action="DRIVING_STICK_TOGGLE"></actionBinding>
+		<actionBinding action="DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED"></actionBinding>
+		<actionBinding action="DRIVING_STICK_ACCELERATE"></actionBinding>
+		<actionBinding action="DRIVING_STICK_DECELERATE"></actionBinding>
+		<actionBinding action="DRIVING_STICK_SWITCH_DIRECTION"></actionBinding>
 	</inputBinding>
 	
 	<l10n>
-        <text name="input_TOGGLE_HEADTRACKING">
-            <en>Toggle Head-/Eyetracking</en>
-            <de>Head-/Eyetracking umschalten</de>
-            <fr>Basculer Head-/Eyetracking</fr>
+        <text name="input_DRIVING_STICK_TOGGLE">
+            <en>Enable / Disable Driving Stick</en>
+            <de>Fahrhebel Einschalten / Ausschalten</de>
+        </text>
+        <text name="input_DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED">
+            <en>Save Speed</en>
+            <de>Geschwindigkeit speichern</de>
+        </text>
+        <text name="input_DRIVING_STICK_ACCELERATE">
+            <en>Accelerate (Axis)</en>
+            <de>Beschleunigen (Achse)</de>
+        </text>
+        <text name="input_DRIVING_STICK_DECELERATE">
+            <en>Decelerate (Axis)</en>
+            <de>Verlangsamen (Achse)</de>
+        </text>
+        <text name="input_DRIVING_STICK_SWITCH_DIRECTION">
+            <en>Change Driving Direction (Axis)</en>
+            <de>Fahrtrichtung wechseln (Achse)</de>
         </text>
 	</l10n>
 </modDesc>

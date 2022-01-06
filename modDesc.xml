@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="61">
+    <author>CptCray</author>
+    <version>1.0.0.0</version>
+    <title>
+        <en>Driving Stick</en>
+        <de>Fahrhebel</de>
+    </title>
+    <description>
+        <en><![CDATA[Driving Stick]]></en>
+        <de><![CDATA[Fahrhebel]]></de>
+    </description>
+    <iconFilename>icon.dds</iconFilename>
+    <multiplayer supported="true"/>
+
+    <extraSourceFiles>
+        <sourceFile filename="src/main.lua"/>
+    </extraSourceFiles>
+
+	<!-- <extraSourceFiles>
+        <sourceFile filename="AddSpecialization.lua"/>
+    </extraSourceFiles>
+	
+	<addSpecialization>
+		<specialization name="DrivingStick" className="DrivingStick" filename="DrivingStick.lua" debug="false">
+			<restrictions 	  state="0"		name="Drivable" />
+		</specialization>
+	</addSpecialization> -->
+
+    <actions>
+		<action name="DRIVING_STICK_TOGGLE_CRUISECONTROL" axisType="HALF" />
+        <action name="DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
+        <action name="DRIVING_STICK_ACCELERATE" axisType="HALF" />
+        <action name="DRIVING_STICK_DECELERATE" axisType="HALF" />
+	</actions>
+
+	<inputBinding>
+		<actionBinding action="DRIVING_STICK_TOGGLE">
+			<!-- <binding device="KB_MOUSE_DEFAULT" input="KEY_lalt KEY_t" /> -->
+		</actionBinding>
+	</inputBinding>
+	
+	<l10n>
+        <text name="input_TOGGLE_HEADTRACKING">
+            <en>Toggle Head-/Eyetracking</en>
+            <de>Head-/Eyetracking umschalten</de>
+            <fr>Basculer Head-/Eyetracking</fr>
+        </text>
+	</l10n>
+</modDesc>

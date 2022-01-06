@@ -25,7 +25,6 @@ function DrivingStickCruiseControl.registerEventListeners(vehicleType)
     print("DrivingStickCruiseControl.registerEventListeners");    
     SpecializationUtil.registerEventListener(vehicleType, "onUpdate", DrivingStickCruiseControl);
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", DrivingStickCruiseControl);
-    -- SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", DrivingStick);
     SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", DrivingStickCruiseControl);
 end
 
@@ -38,9 +37,9 @@ function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isAc
 
         spec.targetSpeed = 0
 
-        if self.getIsEntered ~= nil then
-            entered = self:getIsEntered()
-        end
+        -- if self.getIsEntered ~= nil then
+        --     entered = self:getIsEntered()
+        -- end
 
         local triggerUp, triggerDown, triggerAlways, startActive, callbackState, disableConflictingBindings = false, true, false, true, nil, true
         local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_TOGGLE_CRUISECONTROL, self, DrivingStickCruiseControl.actionEventToggle, false, true, true, true, nil, true)
@@ -114,7 +113,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                         print("spec.accelerateInputValue" .. spec.accelerateInputValue)
                         print("spec.decelerateInputValue" .. spec.decelerateInputValue)
                         -- print("self.movingDirection" .. self.movingDirection)
-                        -- print("lastSpeed: " .. self:getLastSpeed())
+                        print("lastSpeed: " .. self:getLastSpeed())
 
 
                         if spec.decelerateInputValue > spec.decelerateAxisThreshold then
@@ -141,13 +140,15 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                             end
                         end
 
-                        print("targetSpeed" .. spec.targetSpeed)
+                        print("targetSpeed " .. spec.targetSpeed)
 
                         if spec.targetSpeed > 0 then
+                            print("self:getCruiseControlMaxSpeed() " .. self:getCruiseControlMaxSpeed())
                             if spec.targetSpeed > self:getCruiseControlMaxSpeed() then 
                                 spec.targetSpeed = self:getCruiseControlMaxSpeed()
                             end
-                            self:setCruiseControlMaxSpeed(spec.targetSpeed)
+                            print("targetSpeed2 " .. spec.targetSpeed)
+                            self:setCruiseControlMaxSpeed(spec.targetSpeed, spec.targetSpeed)
                             self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_ACTIVE)
                         end
 

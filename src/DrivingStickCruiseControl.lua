@@ -18,8 +18,10 @@ function DrivingStickCruiseControl:onLoad(savegame)
     spec.decelerationEnabled = true
     spec.accelerateAxisThreshold = 0.5
     spec.decelerateAxisThreshold = 0.5
+    spec.switchDirectionInputValue = 0
+    spec.switchDirectionEnabled = true
 
-    spec.inputDelay = 150
+    spec.inputDelay = 200
     spec.inputDelayCurrent = 0
 end
 
@@ -46,9 +48,11 @@ function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isAc
         local triggerUp, triggerDown, triggerAlways, startActive, callbackState, disableConflictingBindings = false, true, false, true, nil, true
         local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_TOGGLE, self, DrivingStickCruiseControl.actionEventToggle, false, true, false, true, nil, true)
         g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
-        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_ACCELERATE, self, DrivingStickCruiseControl.actionEventAccelerate, false, true, true, true, nil, true)
+        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_ACCELERATE, self, DrivingStickCruiseControl.actionEventAccelerate, false, true, true, true, nil, false)
         g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
-        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_DECELERATE, self, DrivingStickCruiseControl.actionEventDecelerate, false, true, true, true, nil, true)
+        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_DECELERATE, self, DrivingStickCruiseControl.actionEventDecelerate, false, true, true, true, nil, false)
+        g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_SWITCH_DIRECTION, self, DrivingStickCruiseControl.actionEventSwitchDirection, false, true, true, true, nil, false)
         g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
         local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED, self, DrivingStickCruiseControl.actionEventSaveCurrentCruiseControlSpeed, false, true, false, true, nil, true)
         g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
@@ -67,6 +71,11 @@ end
 function DrivingStickCruiseControl:actionEventDecelerate(actionName, inputValue, callbackState, isAnalog)
     local spec = self.spec_drivingStickCruiseControl
     spec.decelerateInputValue = inputValue
+end
+
+function DrivingStickCruiseControl:actionEventSwitchDirection(actionName, inputValue, callbackState, isAnalog)
+    local spec = self.spec_drivingStickCruiseControl
+    spec.switchDirectionInputValue = inputValue
 end
 
 function DrivingStickCruiseControl:actionEventSaveCurrentCruiseControlSpeed(actionName, inputValue, callbackState, isAnalog)
@@ -107,6 +116,20 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
             if self:getIsVehicleControlledByPlayer() then 
+
+                if spec.switchDirectionInputValue > 0.3 and spec.active then
+                    if spec.switchDirectionEnabled then                
+                        print("switch direction")            
+                        spec.switchDirectionEnabled = false
+        
+                        local motor = self.spec_motorized.motor
+                        motor:changeDirection(-motor.currentDirection)
+        
+                    end
+                else
+                    spec.switchDirectionEnabled = true
+                end
+
                 if (spec.accelerateInputValue > 0.1 or spec.decelerateInputValue > 0.1) and spec.active then -- 10% axis deadzone
                     if self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then 
                         if self:getLastSpeed() > 1 then

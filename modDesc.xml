@@ -28,10 +28,11 @@
 	</addSpecialization> -->
 
     <actions>
-		<action name="DRIVING_STICK_TOGGLE_CRUISECONTROL" axisType="HALF" />
+		<action name="DRIVING_STICK_TOGGLE" axisType="HALF" />
         <action name="DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
         <action name="DRIVING_STICK_ACCELERATE" axisType="HALF" />
         <action name="DRIVING_STICK_DECELERATE" axisType="HALF" />
+        <action name="DRIVING_STICK_SWITCH_DIRECTION" axisType="HALF" />
 	</actions>
 
 	<inputBinding>

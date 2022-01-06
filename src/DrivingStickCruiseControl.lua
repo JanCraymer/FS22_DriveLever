@@ -16,8 +16,8 @@ function DrivingStickCruiseControl:onLoad(savegame)
     spec.decelerateInputValue = 0
     spec.accelerationEnabled = true
     spec.decelerationEnabled = true
-    spec.accelerateAxisThreshold = 0.5
-    spec.decelerateAxisThreshold = 0.5
+    spec.accelerateAxisThreshold = 0.9
+    spec.decelerateAxisThreshold = 0.8
     spec.switchDirectionInputValue = 0
     spec.switchDirectionEnabled = true
     spec.speedChangeStep = 0.5
@@ -116,12 +116,14 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
     if self.isClient then
 
         spec.inputDelayCurrent = spec.inputDelayCurrent - (dt * spec.inputDelayMultiplier)
-        spec.inputDelayMultiplier = math.min(spec.inputDelayMultiplier + (dt * 0.003), 6)
+        -- spec.inputDelayMultiplier = math.min(spec.inputDelayMultiplier + (dt * 0.003), 6)
+        local axisIputValue = spec.accelerateInputValue + spec.decelerateInputValue
+        spec.inputDelayMultiplier = math.min((axisIputValue * 10), 6)
 
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
             if self:getIsVehicleControlledByPlayer() then 
 
-                if spec.switchDirectionInputValue > 0.3 and spec.active then
+                if spec.switchDirectionInputValue > 0.2 and spec.active then
                     if spec.switchDirectionEnabled then                
                         -- print("switch direction")            
                         spec.switchDirectionEnabled = false
@@ -134,7 +136,10 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                     spec.switchDirectionEnabled = true
                 end
 
-                if (spec.accelerateInputValue > 0.1 or spec.decelerateInputValue > 0.1) and spec.active then -- 10% axis deadzone
+                if (spec.accelerateInputValue > 0.05 or spec.decelerateInputValue > 0.05) and spec.active then -- 5% axis deadzone
+
+                    -- print("spec.inputDelayMultiplier: " .. spec.inputDelayMultiplier)
+
                     if self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then 
                         if self:getLastSpeed() > 1 then
                             spec.targetSpeed = math.floor(self:getLastSpeed())
@@ -149,8 +154,8 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                     if spec.inputDelayCurrent < 0 then
                         spec.inputDelayCurrent = spec.inputDelay
 
-                        -- print("spec.accelerateInputValue" .. spec.accelerateInputValue)
-                        -- print("spec.decelerateInputValue" .. spec.decelerateInputValue)
+                        -- print("spec.accelerateInputValue " .. spec.accelerateInputValue)
+                        -- print("spec.decelerateInputValue " .. spec.decelerateInputValue)
                         -- print("self.movingDirection" .. self.movingDirection)
                         -- print("lastSpeed: " .. self:getLastSpeed())
 

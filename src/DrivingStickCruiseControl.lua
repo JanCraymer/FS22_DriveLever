@@ -135,20 +135,19 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
                 if spec.fullStop and lastSpeed > 1 then
                     self:brake(0.5)
-                else
-                    spec.fullStop = false
+                -- else
+                --     spec.fullStop = false
                 end
 
                 -- print(lastSpeed)
                 -- print(spec.fullStop)
 
 
-                if (spec.accelerateInputValue > 0.01 or spec.decelerateInputValue > 0.01) and spec.active and not spec.fullStop then -- 1% axis deadzone
+                if (spec.accelerateInputValue > 0.01 or spec.decelerateInputValue > 0.01) and spec.active then -- 1% axis deadzone
 
                     -- print("spec.inputDelayMultiplier: " .. spec.inputDelayMultiplier)
 
-                    if self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then 
-                        self:brake(0)
+                    if self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then                         
                         if lastSpeed > 1 and spec.decelerationEnabled and spec.accelerationEnabled then
                             spec.targetSpeed = math.floor(lastSpeed)
                             spec.accelerationEnabled = false
@@ -165,7 +164,6 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                         -- print("spec.accelerateInputValue " .. spec.accelerateInputValue)
                         -- print("spec.decelerateInputValue " .. spec.decelerateInputValue)
                         -- print("self.movingDirection " .. self.movingDirection)
-                        -- print("lastSpeed: " .. self:getLastSpeed())
 
 
                         if spec.decelerateInputValue > spec.decelerateAxisThreshold and spec.decelerationEnabled then
@@ -198,6 +196,8 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                         -- print("targetSpeed " .. spec.targetSpeed)
 
                         if spec.targetSpeed > 0 then
+                            self:brake(0)
+                            spec.fullStop = false
                             -- print("self:getCruiseControlMaxSpeed() " .. self:getCruiseControlMaxSpeed())
                             if spec.targetSpeed > self:getCruiseControlMaxSpeed() then 
                                 spec.targetSpeed = self:getCruiseControlMaxSpeed()

@@ -135,8 +135,6 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
                 if spec.fullStop and lastSpeed > 1 then
                     self:brake(0.5)
-                -- else
-                --     spec.fullStop = false
                 end
 
                 -- print(lastSpeed)
@@ -168,11 +166,6 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
                         if spec.decelerateInputValue > spec.decelerateAxisThreshold and spec.decelerationEnabled then
                             self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_OFF)
-                            if self.movingDirection >= 0 then -- workaround for strange behavior while driving backwards
-                                -- self:brakeToStop()
-                            end
-                            -- self:brake(1)
-                            -- self:setBrakePedalInput(1)
                             spec.fullStop = true
                             spec.targetSpeed = 0
                             spec.decelerationEnabled = false
@@ -202,7 +195,8 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                             if spec.targetSpeed > self:getCruiseControlMaxSpeed() then 
                                 spec.targetSpeed = self:getCruiseControlMaxSpeed()
                             end
-                            self:setCruiseControlMaxSpeed(spec.targetSpeed, spec.targetSpeed)
+                            self:setCruiseControlMaxSpeed(spec.targetSpeed)
+                            -- self:setCruiseControlMaxSpeed(spec.targetSpeed, spec.targetSpeed)
                             self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_ACTIVE)
                         end
 

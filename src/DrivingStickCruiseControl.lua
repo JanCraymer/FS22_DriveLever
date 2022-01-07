@@ -21,6 +21,7 @@ function DrivingStickCruiseControl:onLoad(savegame)
     spec.switchDirectionInputValue = 0
     spec.switchDirectionEnabled = true
     spec.speedChangeStep = 0.5
+    spec.fullStop = false
 
     spec.inputDelay = 200
     spec.inputDelayMultiplier = 1
@@ -90,12 +91,9 @@ end
 
 function DrivingStickCruiseControl:saveCurrentCruiseControlSpeed(self)
     -- print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed")
-    -- print(self.isClient)
     local spec = self.spec_drivingStickCruiseControl
-    -- print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed isClient")
     if self.isActiveForInputIgnoreSelectionIgnoreAI then
-        -- print("DrivingStickCruiseControl:saveCurrentCruiseControlSpeed isActiveForInputIgnoreSelectionIgnoreAI")
-        if self:getIsVehicleControlledByPlayer() then 
+        if DrivingStickCruiseControl:getIsVehicleControlledByPlayer(self) then
             if spec.savedSpeed == 0 then
                 spec.savedSpeed = self:getCruiseControlSpeed()
             else
@@ -108,7 +106,7 @@ end
 
 function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
     local spec = self.spec_drivingStickCruiseControl    
-    
+       
     if self.isClient then
 
         spec.inputDelayCurrent = spec.inputDelayCurrent - (dt * spec.inputDelayMultiplier)
@@ -117,7 +115,8 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
         spec.inputDelayMultiplier = math.min((axisIputValue * 10), 6)
 
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
-            if self:getIsVehicleControlledByPlayer() then 
+
+            if DrivingStickCruiseControl:getIsVehicleControlledByPlayer(self) then 
 
                 if spec.switchDirectionInputValue > 0.2 and spec.active then
                     if spec.switchDirectionEnabled then                
@@ -132,13 +131,26 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                     spec.switchDirectionEnabled = true
                 end
 
-                if (spec.accelerateInputValue > 0.05 or spec.decelerateInputValue > 0.05) and spec.active then -- 5% axis deadzone
+                local lastSpeed = self:getLastSpeed()
+
+                if spec.fullStop and lastSpeed > 1 then
+                    self:brake(0.5)
+                else
+                    spec.fullStop = false
+                end
+
+                -- print(lastSpeed)
+                -- print(spec.fullStop)
+
+
+                if (spec.accelerateInputValue > 0.01 or spec.decelerateInputValue > 0.01) and spec.active and not spec.fullStop then -- 1% axis deadzone
 
                     -- print("spec.inputDelayMultiplier: " .. spec.inputDelayMultiplier)
 
                     if self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then 
-                        if self:getLastSpeed() > 1 then
-                            spec.targetSpeed = math.floor(self:getLastSpeed())
+                        self:brake(0)
+                        if lastSpeed > 1 and spec.decelerationEnabled and spec.accelerationEnabled then
+                            spec.targetSpeed = math.floor(lastSpeed)
                             spec.accelerationEnabled = false
                         else
                             spec.targetSpeed = 0
@@ -152,16 +164,18 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
                         -- print("spec.accelerateInputValue " .. spec.accelerateInputValue)
                         -- print("spec.decelerateInputValue " .. spec.decelerateInputValue)
-                        -- print("self.movingDirection" .. self.movingDirection)
+                        -- print("self.movingDirection " .. self.movingDirection)
                         -- print("lastSpeed: " .. self:getLastSpeed())
 
 
-                        if spec.decelerateInputValue > spec.decelerateAxisThreshold then
-                            -- print("brakeToStop")
+                        if spec.decelerateInputValue > spec.decelerateAxisThreshold and spec.decelerationEnabled then
                             self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_OFF)
                             if self.movingDirection >= 0 then -- workaround for strange behavior while driving backwards
-                                self:brakeToStop()
+                                -- self:brakeToStop()
                             end
+                            -- self:brake(1)
+                            -- self:setBrakePedalInput(1)
+                            spec.fullStop = true
                             spec.targetSpeed = 0
                             spec.decelerationEnabled = false
                         elseif spec.decelerateInputValue > 0 and spec.decelerationEnabled then
@@ -173,7 +187,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                                 spec.targetSpeed = spec.savedSpeed
                             end
                             spec.accelerationEnabled = false
-                        elseif spec.accelerateInputValue > 0 and spec.accelerationEnabled then                            
+                        elseif spec.accelerateInputValue > 0 and spec.accelerationEnabled then
                             spec.targetSpeed = spec.targetSpeed + spec.speedChangeStep
                             if spec.targetSpeed > spec.savedSpeed and spec.savedSpeed > 0 then
                                 spec.targetSpeed = spec.savedSpeed
@@ -228,4 +242,8 @@ function DrivingStickCruiseControl:onDraw(isActiveForInput, isActiveForInputIgno
         local maxSpeedText = spec.savedSpeed > 0 and spec.savedSpeed or self:getCruiseControlMaxSpeed()
         renderText(x, y , textSize, "max " .. tostring(maxSpeedText))
     end
+end
+
+function DrivingStickCruiseControl:getIsVehicleControlledByPlayer(obj)
+    return obj:getIsVehicleControlledByPlayer() or (obj.spec_globalPositioningSystem ~= nil and obj.spec_globalPositioningSystem.guidanceSteeringIsActive)
 end

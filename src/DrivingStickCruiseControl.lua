@@ -22,6 +22,7 @@ function DrivingStickCruiseControl:onLoad(savegame)
     spec.switchDirectionEnabled = true
     spec.speedChangeStep = 0.5
     spec.fullStop = false
+    spec.maxSpeed = 0
 
     spec.inputDelay = 200
     spec.inputDelayMultiplier = 1
@@ -109,6 +110,14 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
        
     if self.isClient then
 
+        if spec.active then
+            local workingSpeedLimit, isWorking = self:getSpeedLimit(true)
+            self.maxSpeed = self:getCruiseControlMaxSpeed()
+            if isWorking then
+                self.maxSpeed = workingSpeedLimit
+            end
+        end
+
         spec.inputDelayCurrent = spec.inputDelayCurrent - (dt * spec.inputDelayMultiplier)
         -- spec.inputDelayMultiplier = math.min(spec.inputDelayMultiplier + (dt * 0.003), 6)
         local axisIputValue = spec.accelerateInputValue + spec.decelerateInputValue
@@ -116,9 +125,9 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
 
-            if DrivingStickCruiseControl:getIsVehicleControlledByPlayer(self) then 
+            if DrivingStickCruiseControl:getIsVehicleControlledByPlayer(self) and self:getIsMotorStarted() then
 
-                if spec.switchDirectionInputValue > 0.2 and spec.active then
+                if spec.switchDirectionInputValue > 0.3 and spec.active then
                     if spec.switchDirectionEnabled then                
                         -- print("switch direction")            
                         spec.switchDirectionEnabled = false
@@ -191,9 +200,9 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                         if spec.targetSpeed > 0 then
                             self:brake(0)
                             spec.fullStop = false
-                            -- print("self:getCruiseControlMaxSpeed() " .. self:getCruiseControlMaxSpeed())
-                            if spec.targetSpeed > self:getCruiseControlMaxSpeed() then 
-                                spec.targetSpeed = self:getCruiseControlMaxSpeed()
+                            -- print("self:getCruiseControlMaxSpeed() " .. self:getCruiseControlMaxSpeed())                  
+                            if spec.targetSpeed > self.maxSpeed then 
+                                spec.targetSpeed = self.maxSpeed
                             end
                             self:setCruiseControlMaxSpeed(spec.targetSpeed)
                             -- self:setCruiseControlMaxSpeed(spec.targetSpeed, spec.targetSpeed)
@@ -233,7 +242,7 @@ function DrivingStickCruiseControl:onDraw(isActiveForInput, isActiveForInputIgno
         setTextAlignment(RenderText.ALIGN_CENTER)
         setTextBold(true)
         
-        local maxSpeedText = spec.savedSpeed > 0 and spec.savedSpeed or self:getCruiseControlMaxSpeed()
+        local maxSpeedText = spec.savedSpeed > 0 and spec.savedSpeed or self.maxSpeed
         renderText(x, y , textSize, "max " .. tostring(maxSpeedText))
     end
 end

@@ -7,8 +7,6 @@ end
 
 function DrivingStickCruiseControl:onLoad(savegame)
     -- print("DrivingStickCruiseControl:onLoad")
-    -- self.spec_drivingStickCruiseControl = self[("spec_%s.drivingStickCruiseControl"):format(DrivingStickCruiseControl.modName)]
-    -- self.spec_drivingStickCruiseControl = self["spec_drivingStickCruiseControl"]
     local spec = self.spec_drivingStickCruiseControl
 
     spec.active = false
@@ -49,9 +47,6 @@ function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isAc
         DrivingStickCruiseControl.actionEvents = {} 
 
         if self:getIsActiveForInput(true) and spec ~= nil then 
-
-            -- _, spec.actionEventSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
-			-- g_inputBinding:setActionEventTextPriority(spec.actionEventSwitch, GS_PRIO_HIGH)
 
             local _, actionEventId = self:addActionEvent(DrivingStickCruiseControl.actionEvents, InputAction.DRIVING_STICK_TOGGLE, self, DrivingStickCruiseControl.actionEventToggle, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)

@@ -14,7 +14,7 @@
     <multiplayer supported="true"/>
 
     <extraSourceFiles>
-        <sourceFile filename="src/main.lua"/>
+        <sourceFile filename="src/DrivingStickRegister.lua"/>
     </extraSourceFiles>
 
     <actions>

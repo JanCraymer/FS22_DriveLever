@@ -7,7 +7,8 @@ end
 
 function DrivingStickCruiseControl:onLoad(savegame)
     -- print("DrivingStickCruiseControl:onLoad")
-    self.spec_drivingStickCruiseControl = self[("spec_%s.drivingStickCruiseControl"):format(DrivingStickCruiseControl.modName)]
+    -- self.spec_drivingStickCruiseControl = self[("spec_%s.drivingStickCruiseControl"):format(DrivingStickCruiseControl.modName)]
+    -- self.spec_drivingStickCruiseControl = self["spec_drivingStickCruiseControl"]
     local spec = self.spec_drivingStickCruiseControl
 
     spec.active = false
@@ -23,6 +24,7 @@ function DrivingStickCruiseControl:onLoad(savegame)
     spec.speedChangeStep = 0.5
     spec.fullStop = false
     spec.maxSpeed = 0
+    spec.targetSpeed = 0
 
     spec.inputDelay = 200
     spec.inputDelayMultiplier = 1
@@ -41,22 +43,28 @@ function DrivingStickCruiseControl:onRegisterActionEvents(isActiveForInput, isAc
     -- print("DrivingStickCruiseControl.onRegisterActionEvents");
 
     if self.isClient then
+
         local spec = self.spec_drivingStickCruiseControl
         self:clearActionEventsTable(spec.actionEvents)
+        DrivingStickCruiseControl.actionEvents = {} 
 
-        spec.targetSpeed = 0
+        if self:getIsActiveForInput(true) and spec ~= nil then 
 
-        local triggerUp, triggerDown, triggerAlways, startActive, callbackState, disableConflictingBindings = false, true, false, true, nil, true
-        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_TOGGLE, self, DrivingStickCruiseControl.actionEventToggle, false, true, false, true, nil, true)
-        g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
-        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_ACCELERATE, self, DrivingStickCruiseControl.actionEventAccelerate, false, true, true, true, nil, false)
-        g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
-        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_DECELERATE, self, DrivingStickCruiseControl.actionEventDecelerate, false, true, true, true, nil, false)
-        g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
-        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_SWITCH_DIRECTION, self, DrivingStickCruiseControl.actionEventSwitchDirection, false, true, true, true, nil, false)
-        g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
-        local state, actionEventId, otherEvents = g_inputBinding:registerActionEvent(InputAction.DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED, self, DrivingStickCruiseControl.actionEventSaveCurrentCruiseControlSpeed, false, true, false, true, nil, true)
-        g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+            -- _, spec.actionEventSwitch = self:addActionEvent(HeadlandManagement.actionEvents, 'HLM_TOGGLESTATE', self, HeadlandManagement.TOGGLESTATE, false, true, false, true, nil)
+			-- g_inputBinding:setActionEventTextPriority(spec.actionEventSwitch, GS_PRIO_HIGH)
+
+            local _, actionEventId = self:addActionEvent(DrivingStickCruiseControl.actionEvents, InputAction.DRIVING_STICK_TOGGLE, self, DrivingStickCruiseControl.actionEventToggle, false, true, false, true, nil)
+            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+            _, actionEventId = self:addActionEvent(DrivingStickCruiseControl.actionEvents, InputAction.DRIVING_STICK_ACCELERATE, self, DrivingStickCruiseControl.actionEventAccelerate, false, true, true, true, nil)
+            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+            _, actionEventId = self:addActionEvent(DrivingStickCruiseControl.actionEvents, InputAction.DRIVING_STICK_DECELERATE, self, DrivingStickCruiseControl.actionEventDecelerate, false, true, true, true, nil)
+            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+            _, actionEventId = self:addActionEvent(DrivingStickCruiseControl.actionEvents, InputAction.DRIVING_STICK_SWITCH_DIRECTION, self, DrivingStickCruiseControl.actionEventSwitchDirection, false, true, true, true, nil)
+            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+            _, actionEventId = self:addActionEvent(DrivingStickCruiseControl.actionEvents, InputAction.DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED, self, DrivingStickCruiseControl.actionEventSaveCurrentCruiseControlSpeed, false, true, false, true, nil)
+            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+        
+        end
     end
 end
 

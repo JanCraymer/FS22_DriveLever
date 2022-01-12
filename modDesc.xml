@@ -39,8 +39,8 @@
             <de>Fahrhebel Einschalten / Ausschalten</de>
         </text>
         <text name="input_DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED">
-            <en>Save / Delete Speed</en>
-            <de>Geschwindigkeit speichern / löschen</de>
+            <en>Save / Delete Speed Limit</en>
+            <de>Geschwindigkeitslimit speichern / löschen</de>
         </text>
         <text name="input_DRIVING_STICK_ACCELERATE">
             <en>Accelerate (Axis)</en>

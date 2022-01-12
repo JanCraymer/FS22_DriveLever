@@ -4,6 +4,8 @@ Für eine deutsche Beschreibung, siehe unten.
 
 The mod allows to configure a joystick as a driving stick similar to the ones modern tractors use for acceleration/deceleration instead of a pedal. 
 
+Download can be found on the [relases page](https://github.com/JanCraymer/FS22_drivingStick/releases).
+
 ## How does it Work?
 
 This mod script uses the games built-in cruise control functionallity and makes it precisely controllable by a joystick. The following features are currently implemented:
@@ -43,6 +45,8 @@ This mod mostly uses default functionallity of the game so it should most likely
 # Fahrhebel für Farming Simulator 22
 
 Dieser Mod ermöglicht es, einen Joystick als Fahrhebel zu konfigurieren, ähnlich derer, die in modernen Traktoren verbaut sind. 
+
+Downloads können auf der [Relases-Seite](https://github.com/JanCraymer/FS22_drivingStick/releases) gefunden werden.
 
 ## Wie funktioniert es?
 

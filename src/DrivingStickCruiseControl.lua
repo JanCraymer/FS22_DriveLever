@@ -26,7 +26,7 @@ function DrivingStickCruiseControl:onLoad(savegame)
     spec.maxSpeed = 0
     spec.targetSpeed = 0
 
-    spec.inputDelay = 200
+    spec.inputDelay = 250
     spec.inputDelayMultiplier = 1
     spec.inputDelayCurrent = 0
 end
@@ -162,6 +162,8 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
                 if spec.fullStop and lastSpeed > 1 then
                     self:brake(0.5)
+                else
+                    spec.fullStop = false
                 end
 
                 -- print(lastSpeed)
@@ -215,7 +217,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                         end
 
                         if spec.targetSpeed > 0 then
-                            self:brake(0)
+                            -- self:brake(0)
                             spec.fullStop = false
                             if spec.targetSpeed > spec.maxSpeed then 
                                 spec.targetSpeed = spec.maxSpeed

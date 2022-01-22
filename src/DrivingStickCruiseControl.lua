@@ -132,7 +132,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
             spec.maxSpeed = self:getCruiseControlMaxSpeed()
             savedSpeed = spec.savedSpeed
             if isWorking then
-                spec.maxSpeed = workingSpeedLimit
+                spec.maxSpeed = math.floor(workingSpeedLimit)
                 savedSpeed = spec.savedSpeedWorking
             end
         end

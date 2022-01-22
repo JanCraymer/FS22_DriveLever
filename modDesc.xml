@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="61">
     <author>CptCray</author>
-    <version>0.1.1.0</version>
+    <version>0.2.0.0</version>
     <title>
         <en>Driving Stick</en>
         <de>Fahrhebel</de>
@@ -23,6 +23,7 @@
         <action name="DRIVING_STICK_ACCELERATE" axisType="HALF" />
         <action name="DRIVING_STICK_DECELERATE" axisType="HALF" />
         <action name="DRIVING_STICK_SWITCH_DIRECTION" axisType="HALF" />
+        <action name="DRIVING_STICK_ACCELERATE_TO_MAX" axisType="HALF" />
 	</actions>
 
 	<inputBinding>
@@ -31,6 +32,7 @@
 		<actionBinding action="DRIVING_STICK_ACCELERATE"></actionBinding>
 		<actionBinding action="DRIVING_STICK_DECELERATE"></actionBinding>
 		<actionBinding action="DRIVING_STICK_SWITCH_DIRECTION"></actionBinding>
+		<actionBinding action="DRIVING_STICK_ACCELERATE_TO_MAX"></actionBinding>
 	</inputBinding>
 	
 	<l10n>
@@ -54,5 +56,10 @@
             <en>Change Driving Direction (Axis)</en>
             <de>Fahrtrichtung wechseln (Achse)</de>
         </text>
+        <text name="input_DRIVING_STICK_ACCELERATE_TO_MAX">
+            <en>Accelerate to max speed (Axis)</en>
+            <de>Auf maximale Geschwingkeit beschleunigen (Achse)</de>
+        </text>
+
 	</l10n>
 </modDesc>

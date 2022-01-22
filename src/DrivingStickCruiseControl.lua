@@ -201,6 +201,9 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                             spec.decelerationEnabled = false
                         elseif spec.decelerateInputValue > 0 and spec.decelerationEnabled then
                             spec.targetSpeed = spec.targetSpeed - spec.speedChangeStep
+                            if spec.targetSpeed > lastSpeed then
+                                spec.targetSpeed = math.floor(lastSpeed)
+                            end
                         elseif spec.accelerateInputValue > spec.accelerateAxisThreshold then -- full forward
                             if savedSpeed < 1 then
                                 spec.targetSpeed = self:getCruiseControlMaxSpeed()

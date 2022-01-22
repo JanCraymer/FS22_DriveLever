@@ -166,7 +166,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                     spec.fullStop = false
                 end
 
-                -- print(lastSpeed)
+                print(lastSpeed)
                 -- print(spec.fullStop)
 
 
@@ -216,6 +216,9 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                             if spec.targetSpeed > savedSpeed and savedSpeed > 0 then
                                 spec.targetSpeed = savedSpeed
                                 -- spec.accelerationEnabled = false
+                            -- if the difference between targetSpeed and actual speed becomes to high we reset targetSpeed. This improves driving without HUD
+                            elseif (spec.targetSpeed - lastSpeed) > 2 then 
+                                spec.targetSpeed = math.ceil(lastSpeed) + 2
                             end
                         end
 

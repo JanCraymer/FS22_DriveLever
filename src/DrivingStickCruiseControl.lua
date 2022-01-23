@@ -32,6 +32,7 @@ function DrivingStickCruiseControl:onLoad(savegame)
     spec.fullStop = false
     spec.maxSpeed = 0
     spec.targetSpeed = 0
+    spec.targetSpeedSent = 0
     spec.lastTargetSpeed = 0
 
     spec.inputDelay = 250
@@ -134,7 +135,8 @@ function DrivingStickCruiseControl:saveCurrentCruiseControlSpeed(self)
 end
 
 function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInputIgnoreSelection, isSelected)
-    local spec = self.spec_drivingStickCruiseControl    
+    local spec = self.spec_drivingStickCruiseControl  
+    local spec_drivable = self.spec_drivable  
        
     if self.isClient then
 
@@ -256,7 +258,17 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                         if spec.targetSpeed > spec.maxSpeed then 
                             spec.targetSpeed = spec.maxSpeed
                         end
-                        self:setCruiseControlMaxSpeed(spec.targetSpeed)
+                        self:setCruiseControlMaxSpeed(spec.targetSpeed, spec_drivable.cruiseControl.maxSpeedReverse)
+
+                        if spec.targetSpeed ~= spec.targetSpeedSent then
+                            if g_server ~= nil then
+                                g_server:broadcastEvent(SetCruiseControlSpeedEvent.new(self, spec.targetSpeed, spec_drivable.cruiseControl.maxSpeedReverse), nil, nil, self)
+                            else
+                                g_client:getServerConnection():sendEvent(SetCruiseControlSpeedEvent.new(self, spec.targetSpeed, spec_drivable.cruiseControl.maxSpeedReverse))
+                            end
+                            spec.targetSpeedSent = spec.targetSpeed
+                        end
+                        
                         self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_ACTIVE)
                     end
                     spec.lastTargetSpeed = spec.targetSpeed

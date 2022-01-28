@@ -160,7 +160,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
 
-            if DrivingStickCruiseControl:getIsVehicleControlledByPlayer(self) and self:getIsMotorStarted() then
+            if DrivingStickCruiseControl:getIsVehicleControlledByPlayer(self) and self:getIsMotorStarted() and spec.isActive then
 
                 if spec.switchDirectionInputValue > 0.3 and spec.isActive then
                     if spec.switchDirectionEnabled then                
@@ -187,11 +187,12 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
 
                 -- print("spec.accelerateToMaxInputValue " .. spec.accelerateToMaxInputValue)
                 if spec.accelerateToMaxInputValue > spec.accelerateToMaxAxisThreshold and spec.isActive then
+                    spec.fullStop = false
                     if savedSpeed < 1 then
                         spec.targetSpeed = self:getCruiseControlMaxSpeed()
                     else
                         spec.targetSpeed = savedSpeed
-                    end
+                    end                    
                 elseif (spec.accelerateInputValue > 0.01 or spec.decelerateInputValue > 0.01) and spec.isActive then -- 1% axis deadzone
 
                     -- print("spec.inputDelayMultiplier: " .. spec.inputDelayMultiplier)
@@ -227,6 +228,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                                 spec.targetSpeed = math.floor(lastSpeed)
                             end
                         elseif spec.accelerateInputValue > spec.accelerateAxisThreshold then -- full forward
+                            spec.fullStop = false
                             if savedSpeed < 1 then
                                 spec.targetSpeed = self:getCruiseControlMaxSpeed()
                             else
@@ -234,6 +236,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                             end
                             spec.accelerationEnabled = false
                         elseif spec.accelerateInputValue > 0 and spec.accelerationEnabled then
+                            spec.fullStop = false
                             spec.targetSpeed = spec.targetSpeed + spec.speedChangeStep
                             if spec.targetSpeed > savedSpeed and savedSpeed > 0 then
                                 spec.targetSpeed = savedSpeed
@@ -254,7 +257,7 @@ function DrivingStickCruiseControl:onUpdate(dt, isActiveForInput, isActiveForInp
                 if spec.targetSpeed ~= spec.lastTargetSpeed then
                     if spec.targetSpeed > 0 then
                         -- self:brake(0)
-                        spec.fullStop = false
+                        -- spec.fullStop = false
                         if spec.targetSpeed > spec.maxSpeed then 
                             spec.targetSpeed = spec.maxSpeed
                         end

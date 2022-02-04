@@ -4,7 +4,7 @@
 DriveLever = {}
 
 function DriveLever.prerequisitesPresent(specializations)
-	return true
+    return true
 end
 
 function DriveLever.registerFunctions(vehicleType)
@@ -90,7 +90,7 @@ function DriveLever:onUpdate(dt)
         spec.vehicle.isStopped = true
         spec.vehicle.stop = false
     end
-    
+
     if self.isClient and spec.isEnabled then
 
         -- determine max speeds
@@ -104,7 +104,7 @@ function DriveLever:onUpdate(dt)
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
 
             spec.input.delay.current = spec.input.delay.current - (dt * spec.input.delay.multiplier)
-        
+
             if spec.input.changed then
 
                 -- change direction
@@ -150,7 +150,7 @@ function DriveLever:onUpdate(dt)
                         if spec.input.backward.isAnalog and spec.input.backward.value > spec.input.backward.threshold then
                             spec.input.backward.enabled = false
                             self:stop()
-                        else                        
+                        else
                             -- change speed
                             local newSpeed = 0
                             if not spec.vehicle.isStopped and self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then
@@ -193,18 +193,22 @@ function DriveLever:onUpdate(dt)
 end
 
 function calculateSpeedChangeStep(inputValue)
-    return  5 * math.floor(inputValue * 10) / 10
+    return 5 * math.floor(inputValue * 10) / 10
 end
 
 function DriveLever:changeSpeed(targetSpeed)
     local spec = self.spec_driveLever
-    if targetSpeed < 0 then targetSpeed = 0 end
+    if targetSpeed < 0 then
+        targetSpeed = 0
+    end
     spec.vehicle.targetSpeed = targetSpeed
 
     if spec.vehicle.targetSpeed > 0 then
-        if spec.vehicle.targetSpeed < 0.5 then spec.vehicle.targetSpeed = 0.5 end
+        if spec.vehicle.targetSpeed < 0.5 then
+            spec.vehicle.targetSpeed = 0.5
+        end
         local spec_drivable = self.spec_drivable
-        spec.vehicle.stop = false            
+        spec.vehicle.stop = false
         self:setCruiseControlMaxSpeed(spec.vehicle.targetSpeed, spec_drivable.cruiseControl.maxSpeedReverse)
 
         if spec.vehicle.targetSpeed ~= spec.vehicle.targetSpeedSent then
@@ -231,7 +235,7 @@ function DriveLever:accelerateToMax()
 
     if spec.vehicle.isWorking then
         self:changeSpeed(spec.vehicle.maxSpeed.working)
-    else 
+    else
         self:changeSpeed(spec.vehicle.maxSpeed.normal)
     end
 end
@@ -247,7 +251,7 @@ end
 function DriveLever:changeDirection(direction)
     local motor = self.spec_motorized.motor
 
-    if direction == nil then 
+    if direction == nil then
         motor:changeDirection(-motor.currentDirection)
     else
         motor:changeDirection(direction)
@@ -296,7 +300,7 @@ function DriveLever:actionEventForward(actionName, inputValue, callbackState, is
     spec.input.changed = true
     spec.input.forward.value = inputValue
     spec.input.forward.isAnalog = isAnalog
-     --self:debug(spec.input.forward)
+    --self:debug(spec.input.forward)
 end
 
 function DriveLever:actionEventBackward(actionName, inputValue, callbackState, isAnalog)
@@ -338,7 +342,6 @@ function DriveLever:onReadStream(streamId, connection)
     spec.vehicle.stop = streamReadBool(streamId)
 end
 
-
 function DriveLever:debug(v)
     local spec = self.spec_driveLever
 
@@ -351,16 +354,17 @@ function DriveLever:debug(v)
     end
 end
 
-
 function tprint (tbl, indent)
-    if not indent then indent = 0 end
+    if not indent then
+        indent = 0
+    end
     for k, v in pairs(tbl) do
         formatting = string.rep("  ", indent) .. k .. ": "
         if type(v) == "table" then
             print(formatting)
-            tprint(v, indent+1)
+            tprint(v, indent + 1)
         elseif type(v) == 'boolean' then
-            print(formatting .. tostring(v))      
+            print(formatting .. tostring(v))
         else
             print(formatting .. v)
         end

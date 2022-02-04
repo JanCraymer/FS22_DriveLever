@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="61">
     <author>CptCray</author>
-    <version>0.2.1.0</version>
+    <version>0.3.0.0</version>
     <title>
-        <en>Driving Stick</en>
+        <en>Drive Lever</en>
         <de>Fahrhebel</de>
     </title>
     <description>
-        <en><![CDATA[Driving Stick]]></en>
+        <en><![CDATA[Drive Lever]]></en>
         <de><![CDATA[Fahrhebel]]></de>
     </description>
     <iconFilename>icon.dds</iconFilename>
     <multiplayer supported="true"/>
 
     <extraSourceFiles>
-        <sourceFile filename="src/DrivingStickRegister.lua"/>
+        <sourceFile filename="src/DriveLeverRegister.lua"/>
     </extraSourceFiles>
 
     <actions>
-		<action name="DRIVING_STICK_TOGGLE" axisType="HALF" />
-        <action name="DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
-        <action name="DRIVING_STICK_ACCELERATE" axisType="HALF" />
-        <action name="DRIVING_STICK_DECELERATE" axisType="HALF" />
-        <action name="DRIVING_STICK_SWITCH_DIRECTION" axisType="HALF" />
-        <action name="DRIVING_STICK_ACCELERATE_TO_MAX" axisType="HALF" />
+		<action name="DRIVE_LEVER_TOGGLE" axisType="HALF" />
+        <action name="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
+        <action name="DRIVE_LEVER_ACCELERATE" axisType="HALF" />
+        <action name="DRIVE_LEVER_DECELERATE" axisType="HALF" />
+        <action name="DRIVE_LEVER_SWITCH_DIRECTION" axisType="HALF" />
+        <action name="DRIVE_LEVER_ACCELERATE_TO_MAX" axisType="HALF" />
 	</actions>
 
 	<inputBinding>
-		<actionBinding action="DRIVING_STICK_TOGGLE"></actionBinding>
-		<actionBinding action="DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED"></actionBinding>
-		<actionBinding action="DRIVING_STICK_ACCELERATE"></actionBinding>
-		<actionBinding action="DRIVING_STICK_DECELERATE"></actionBinding>
-		<actionBinding action="DRIVING_STICK_SWITCH_DIRECTION"></actionBinding>
-		<actionBinding action="DRIVING_STICK_ACCELERATE_TO_MAX"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_TOGGLE"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_ACCELERATE"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_DECELERATE"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_SWITCH_DIRECTION"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_ACCELERATE_TO_MAX"></actionBinding>
 	</inputBinding>
 	
 	<l10n>
-        <text name="input_DRIVING_STICK_TOGGLE">
-            <en>Enable / Disable Driving Stick</en>
+        <text name="input_DRIVE_LEVER_TOGGLE">
+            <en>Enable / Disable Drive Lever</en>
             <de>Fahrhebel Einschalten / Ausschalten</de>
         </text>
-        <text name="input_DRIVING_STICK_SAVE_CURRENT_CRUISECONTROL_SPEED">
+        <text name="input_DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED">
             <en>Save / Delete Speed Limit</en>
             <de>Geschwindigkeitslimit speichern / löschen</de>
         </text>
-        <text name="input_DRIVING_STICK_ACCELERATE">
+        <text name="input_DRIVE_LEVER_ACCELERATE">
             <en>Accelerate (Axis)</en>
             <de>Beschleunigen (Achse)</de>
         </text>
-        <text name="input_DRIVING_STICK_DECELERATE">
+        <text name="input_DRIVE_LEVER_DECELERATE">
             <en>Decelerate (Axis)</en>
             <de>Verlangsamen (Achse)</de>
         </text>
-        <text name="input_DRIVING_STICK_SWITCH_DIRECTION">
+        <text name="input_DRIVE_LEVER_SWITCH_DIRECTION">
             <en>Change Driving Direction (Axis)</en>
             <de>Fahrtrichtung wechseln (Achse)</de>
         </text>
-        <text name="input_DRIVING_STICK_ACCELERATE_TO_MAX">
+        <text name="input_DRIVE_LEVER_ACCELERATE_TO_MAX">
             <en>Accelerate to max speed (Axis)</en>
             <de>Auf maximale Geschwingkeit beschleunigen (Achse)</de>
         </text>

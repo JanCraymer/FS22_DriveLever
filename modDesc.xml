@@ -20,19 +20,19 @@
     <actions>
 		<action name="DRIVE_LEVER_TOGGLE" axisType="HALF" />
         <action name="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
-        <action name="DRIVE_LEVER_ACCELERATE" axisType="HALF" />
-        <action name="DRIVE_LEVER_DECELERATE" axisType="HALF" />
-        <action name="DRIVE_LEVER_SWITCH_DIRECTION" axisType="HALF" />
-        <action name="DRIVE_LEVER_ACCELERATE_TO_MAX" axisType="HALF" />
+        <action name="DRIVE_LEVER_FORWARD" axisType="HALF" />
+        <action name="DRIVE_LEVER_BACKWARD" axisType="HALF" />
+        <action name="DRIVE_LEVER_CHANGE_DIRECTION" axisType="HALF" />
+        <action name="DRIVE_LEVER_TO_MAX" axisType="HALF" />
 	</actions>
 
 	<inputBinding>
 		<actionBinding action="DRIVE_LEVER_TOGGLE"></actionBinding>
 		<actionBinding action="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED"></actionBinding>
-		<actionBinding action="DRIVE_LEVER_ACCELERATE"></actionBinding>
-		<actionBinding action="DRIVE_LEVER_DECELERATE"></actionBinding>
-		<actionBinding action="DRIVE_LEVER_SWITCH_DIRECTION"></actionBinding>
-		<actionBinding action="DRIVE_LEVER_ACCELERATE_TO_MAX"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_FORWARD"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_BACKWARD"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_CHANGE_DIRECTION"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_TO_MAX"></actionBinding>
 	</inputBinding>
 	
 	<l10n>
@@ -44,19 +44,19 @@
             <en>Save / Delete Speed Limit</en>
             <de>Geschwindigkeitslimit speichern / löschen</de>
         </text>
-        <text name="input_DRIVE_LEVER_ACCELERATE">
+        <text name="input_DRIVE_LEVER_FORWARD">
             <en>Accelerate (Axis)</en>
             <de>Beschleunigen (Achse)</de>
         </text>
-        <text name="input_DRIVE_LEVER_DECELERATE">
+        <text name="input_DRIVE_LEVER_BACKWARD">
             <en>Decelerate (Axis)</en>
             <de>Verlangsamen (Achse)</de>
         </text>
-        <text name="input_DRIVE_LEVER_SWITCH_DIRECTION">
+        <text name="input_DRIVE_LEVER_CHANGE_DIRECTION">
             <en>Change Driving Direction (Axis)</en>
             <de>Fahrtrichtung wechseln (Achse)</de>
         </text>
-        <text name="input_DRIVE_LEVER_ACCELERATE_TO_MAX">
+        <text name="input_DRIVE_LEVER_TO_MAX">
             <en>Accelerate to max speed (Axis)</en>
             <de>Auf maximale Geschwingkeit beschleunigen (Achse)</de>
         </text>

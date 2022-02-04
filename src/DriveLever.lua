@@ -14,6 +14,8 @@ function DriveLever.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "stop", DriveLever.stop)
     SpecializationUtil.registerFunction(vehicleType, "accelerateToMax", DriveLever.accelerateToMax)
     SpecializationUtil.registerFunction(vehicleType, "toggleAxes", DriveLever.toggleAxes)
+    SpecializationUtil.registerFunction(vehicleType, "saveConfigXml", DriveLever.saveConfigXml)
+    SpecializationUtil.registerFunction(vehicleType, "loadConfigXml", DriveLever.loadConfigXml)
 end
 
 function DriveLever.registerEventListeners(vehicleType)
@@ -45,7 +47,6 @@ function DriveLever:onLoad(savegame)
     spec.vehicle.maxSpeed.savedCruise = 0
     spec.vehicle.maxSpeed.savedWorking = 0
 
-    -- @Todo: make configurable
     spec.input = {}
     spec.input.changed = false
     spec.input.useFrontloaderAxes = true
@@ -79,6 +80,48 @@ function DriveLever:onLoad(savegame)
     spec.input.delay.multiplier = 1
     spec.input.delay.current = 0
 
+    local fileName = g_currentMission.missionInfo.savegameDirectory .. "/DriveLever.xml"
+    if not fileExists(fileName) then
+        self:saveConfigXml(fileName)
+    else
+        self:loadConfigXml(fileName)
+    end
+end
+
+function DriveLever:loadConfigXml(fileName)
+    local spec = self.spec_driveLever
+    local xmlFile = loadXMLFile("DriveLever_XML", fileName)
+
+    spec.debug = getXMLBool(xmlFile, "DriveLever.debug")
+    spec.input.useFrontloaderAxes = getXMLBool(xmlFile, "DriveLever.useFrontloaderAxes")
+    spec.vehicle.brakeForce = getXMLString(xmlFile, "DriveLever.vehicleBrakeForce")
+    spec.input.forward.deadzone = getXMLString(xmlFile, "DriveLever.forwardDeadzone")
+    spec.input.forward.threshold = getXMLString(xmlFile, "DriveLever.forwardThreshold")
+    spec.input.backward.deadzone = getXMLString(xmlFile, "DriveLever.backwardDeadzone")
+    spec.input.backward.threshold = getXMLString(xmlFile, "DriveLever.backwardThreshold")
+    spec.input.toMax.deadzone = getXMLString(xmlFile, "DriveLever.toMaxDeadzone")
+    spec.input.changeDirection.deadzone = getXMLString(xmlFile, "DriveLever.changeDirectionDeadzone")
+
+    delete(xmlFile)
+
+end
+
+function DriveLever:saveConfigXml(fileName)
+    local spec = self.spec_driveLever
+    local xmlFile = createXMLFile("DriveLever_XML", fileName, "DriveLever")
+
+    setXMLBool(xmlFile, "DriveLever.debug", spec.debug)
+    setXMLBool(xmlFile, "DriveLever.useFrontloaderAxes", spec.input.useFrontloaderAxes)
+    setXMLFloat(xmlFile, "DriveLever.vehicleBrakeForce", spec.vehicle.brakeForce)
+    setXMLFloat(xmlFile, "DriveLever.forwardDeadzone", spec.input.forward.deadzone)
+    setXMLFloat(xmlFile, "DriveLever.forwardThreshold", spec.input.forward.threshold)
+    setXMLFloat(xmlFile, "DriveLever.backwardDeadzone", spec.input.backward.deadzone)
+    setXMLFloat(xmlFile, "DriveLever.backwardThreshold", spec.input.backward.threshold)
+    setXMLFloat(xmlFile, "DriveLever.toMaxDeadzone", spec.input.toMax.deadzone)
+    setXMLFloat(xmlFile, "DriveLever.changeDirectionDeadzone", spec.input.changeDirection.deadzone)
+    saveXMLFile(xmlFile)
+
+    delete(xmlFile)
 end
 
 function DriveLever:onUpdate(dt)

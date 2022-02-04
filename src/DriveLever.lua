@@ -31,7 +31,7 @@ function DriveLever:onLoad(savegame)
     spec.vehicle = {}
     spec.vehicle.targetSpeed = 0
     spec.vehicle.targetSpeedSent = 0
-    spec.vehicle.maxSpeedAdvance = 2
+    spec.vehicle.maxSpeedAdvance = 3
     spec.vehicle.brakeForce = 0.5
     spec.vehicle.stop = false
     spec.vehicle.isStopped = nil
@@ -358,7 +358,27 @@ function DriveLever:actionEventSaveSpeed()
 end
 
 function DriveLever:onDraw()
+    local spec = self.spec_driveLever
 
+    if spec.isEnabled then
+        local baseX, baseY = g_currentMission.inGameMenu.hud.speedMeter.cruiseControlElement:getPosition()
+        local textSize = g_currentMission.inGameMenu.hud.speedMeter.cruiseControlTextSize * 0.7
+
+        local x = baseX + (g_currentMission.inGameMenu.hud.speedMeter.cruiseControlElement:getWidth())
+        local y = baseY - (textSize * 0.8)
+
+        setTextAlignment(RenderText.ALIGN_CENTER)
+        setTextBold(true)
+
+        local maxSpeedText = spec.vehicle.maxSpeed.savedCruise > 0 and spec.vehicle.maxSpeed.savedCruise or spec.vehicle.maxSpeed.cruise
+        if spec.vehicle.isWorking then
+            maxSpeedText = spec.vehicle.maxSpeed.savedWorking > 0 and spec.vehicle.maxSpeed.savedWorking or spec.vehicle.maxSpeed.working
+            setTextColor(0, 0.68, 0.2, 1)
+        else
+            setTextColor(0.000300, 0.564700, 0.982200, 1)
+        end
+        renderText(x, y, textSize, "max " .. tostring(maxSpeedText))
+    end
 end
 
 function DriveLever:onWriteStream(streamId, connection)

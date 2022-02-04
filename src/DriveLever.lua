@@ -13,6 +13,7 @@ function DriveLever.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "changeSpeed", DriveLever.changeSpeed)
     SpecializationUtil.registerFunction(vehicleType, "stop", DriveLever.stop)
     SpecializationUtil.registerFunction(vehicleType, "accelerateToMax", DriveLever.accelerateToMax)
+    SpecializationUtil.registerFunction(vehicleType, "toggleAxes", DriveLever.toggleAxes)
 end
 
 function DriveLever.registerEventListeners(vehicleType)
@@ -20,6 +21,8 @@ function DriveLever.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", DriveLever);
     SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", DriveLever);
     SpecializationUtil.registerEventListener(vehicleType, "onDraw", DriveLever);
+    SpecializationUtil.registerEventListener(vehicleType, "onReadStream", DriveLever)
+    SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", DriveLever)
 end
 
 function DriveLever:onLoad(savegame)
@@ -45,6 +48,7 @@ function DriveLever:onLoad(savegame)
     -- @Todo: make configurable
     spec.input = {}
     spec.input.changed = false
+    spec.input.useFrontloaderAxes = true
 
     spec.input.forward = {}
     spec.input.forward.value = 0
@@ -222,7 +226,7 @@ function DriveLever:changeSpeed(targetSpeed)
 
         self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_ACTIVE)
     end
-    self:debug(spec.vehicle.targetSpeed)
+    --self:debug(spec.vehicle.targetSpeed)
 end
 
 function DriveLever:saveSpeed()
@@ -280,26 +284,53 @@ function DriveLever:onRegisterActionEvents(isActiveForInput, isActiveForInputIgn
 
             local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TOGGLE, self, DriveLever.actionEventToggle, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
-            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_FORWARD, self, DriveLever.actionEventForward, false, true, true, true, nil)
-            g_inputBinding:setActionEventTextPriority(actionEventId, false)
-            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_BACKWARD, self, DriveLever.actionEventBackward, false, true, true, true, nil)
-            g_inputBinding:setActionEventTextPriority(actionEventId, false)
-            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_CHANGE_DIRECTION, self, DriveLever.actionEventChangeDirection, false, true, true, true, nil)
-            g_inputBinding:setActionEventTextPriority(actionEventId, false)
             _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED, self, DriveLever.actionEventSaveSpeed, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
-            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TO_MAX, self, DriveLever.actionEventToMax, false, true, true, true, nil)
-            g_inputBinding:setActionEventTextPriority(actionEventId, false)
+            if spec.input.useFrontloaderAxes then
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.AXIS_FRONTLOADER_ARM, self, DriveLever.actionEventChangeSpeed, false, true, true, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.AXIS_FRONTLOADER_TOOL, self, DriveLever.actionEventChangeDirectionAndMax, false, true, true, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, false)
+            else
+                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_FORWARD, self, DriveLever.actionEventForward, false, true, true, true, nil)
+                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_BACKWARD, self, DriveLever.actionEventBackward, false, true, true, true, nil)
+                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_CHANGE_DIRECTION, self, DriveLever.actionEventChangeDirection, false, true, true, true, nil)
+                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TO_MAX, self, DriveLever.actionEventToMax, false, true, true, true, nil)
+                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_SPEED, self, DriveLever.actionEventChangeSpeed, false, true, true, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_DIRECTION_AND_MAX, self, DriveLever.actionEventChangeDirectionAndMax, false, true, true, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, false)
+            end
 
+            self:toggleAxes(spec.isEnabled)
             self:debug(spec.actionEvents)
 
         end
     end
 end
 
+function DriveLever:toggleAxes(active)
+    print("DriveLever:toggleAxes")
+    local spec = self.spec_driveLever
+
+    local axes = {}
+    axes.actionEventChangeSpeed = spec.actionEvents[InputAction.AXIS_FRONTLOADER_ARM]
+    axes.actionEventChangeDirectionAndMax = spec.actionEvents[InputAction.AXIS_FRONTLOADER_TOOL]
+
+    for k, v in pairs(axes) do
+        --print("toggle: " .. k)
+        g_inputBinding:setActionEventActive(v.actionEventId, active)
+    end
+end
+
 function DriveLever:actionEventToggle(actionName, inputValue, callbackState, isAnalog)
     local spec = self.spec_driveLever
     spec.isEnabled = not spec.isEnabled
+    self:toggleAxes(spec.isEnabled)
 end
 
 function DriveLever:actionEventForward(actionName, inputValue, callbackState, isAnalog)
@@ -312,7 +343,7 @@ function DriveLever:actionEventForward(actionName, inputValue, callbackState, is
 end
 
 function DriveLever:actionEventBackward(actionName, inputValue, callbackState, isAnalog)
-    -- print("DriveLever:actionEventBackward")
+    --print("DriveLever:actionEventBackward")
     local spec = self.spec_driveLever
     spec.input.changed = true
     spec.input.backward.value = inputValue
@@ -320,20 +351,53 @@ function DriveLever:actionEventBackward(actionName, inputValue, callbackState, i
     --self:debug(spec.input.backward)
 end
 
+function DriveLever:actionEventChangeSpeed(actionName, inputValue, callbackState, isAnalog)
+    local spec = self.spec_driveLever
+    spec.input.changed = true
+
+    spec.input.forward.isAnalog = isAnalog
+    spec.input.backward.isAnalog = isAnalog
+
+    if spec.input.useFrontloaderAxes then
+        inputValue = -inputValue
+    end
+
+    if inputValue > 0 then
+        spec.input.forward.value = inputValue
+    else
+        spec.input.backward.value = -inputValue
+    end
+end
+
 function DriveLever:actionEventChangeDirection(actionName, inputValue, callbackState, isAnalog)
-    print("DriveLever:actionEventChangeDirection")
+    --print("DriveLever:actionEventChangeDirection")
     local spec = self.spec_driveLever
     spec.input.changed = true
     spec.input.changeDirection.value = inputValue
-    self:debug(spec.input.changeDirection)
+    --self:debug(spec.input.changeDirection)
 end
 
 function DriveLever:actionEventToMax(actionName, inputValue, callbackState, isAnalog)
-    print("DriveLever:actionEventToMax")
+    --print("DriveLever:actionEventToMax")
     local spec = self.spec_driveLever
     spec.input.changed = true
     spec.input.toMax.value = inputValue
-    self:debug(spec.input.toMax)
+    --self:debug(spec.input.toMax)
+end
+
+function DriveLever:actionEventChangeDirectionAndMax(actionName, inputValue, callbackState, isAnalog)
+    --print("DriveLever:actionEventChangeDirectionAndMax")
+    local spec = self.spec_driveLever
+    spec.input.changed = true
+
+    spec.input.changeDirection.isAnalog = isAnalog
+    spec.input.toMax.isAnalog = isAnalog
+
+    if inputValue > 0 then
+        spec.input.changeDirection.value = inputValue
+    else
+        spec.input.toMax.value = -inputValue
+    end
 end
 
 function DriveLever:actionEventSaveSpeed()

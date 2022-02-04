@@ -20,21 +20,25 @@
     <actions>
 		<action name="DRIVE_LEVER_TOGGLE" axisType="HALF" />
         <action name="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
-        <action name="DRIVE_LEVER_FORWARD" axisType="HALF" />
-        <action name="DRIVE_LEVER_BACKWARD" axisType="HALF" />
-        <action name="DRIVE_LEVER_CHANGE_DIRECTION" axisType="HALF" />
-        <action name="DRIVE_LEVER_TO_MAX" axisType="HALF" />
+<!--        <action name="DRIVE_LEVER_FORWARD" axisType="HALF" />-->
+<!--        <action name="DRIVE_LEVER_BACKWARD" axisType="HALF" />-->
+        <action name="DRIVE_LEVER_SPEED" axisType="FULL" />
+<!--        <action name="DRIVE_LEVER_CHANGE_DIRECTION" axisType="HALF" />-->
+<!--        <action name="DRIVE_LEVER_TO_MAX" axisType="HALF" />-->
+        <action name="DRIVE_LEVER_DIRECTION_AND_MAX" axisType="FULL" />
 	</actions>
 
 	<inputBinding>
 		<actionBinding action="DRIVE_LEVER_TOGGLE"></actionBinding>
 		<actionBinding action="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED"></actionBinding>
-		<actionBinding action="DRIVE_LEVER_FORWARD"></actionBinding>
-		<actionBinding action="DRIVE_LEVER_BACKWARD"></actionBinding>
-		<actionBinding action="DRIVE_LEVER_CHANGE_DIRECTION"></actionBinding>
-		<actionBinding action="DRIVE_LEVER_TO_MAX"></actionBinding>
+<!--		<actionBinding action="DRIVE_LEVER_FORWARD"></actionBinding>-->
+<!--		<actionBinding action="DRIVE_LEVER_BACKWARD"></actionBinding>-->
+		<actionBinding action="DRIVE_LEVER_SPEED"></actionBinding>
+<!--		<actionBinding action="DRIVE_LEVER_CHANGE_DIRECTION"></actionBinding>-->
+<!--		<actionBinding action="DRIVE_LEVER_TO_MAX"></actionBinding>-->
+		<actionBinding action="DRIVE_LEVER_DIRECTION_AND_MAX"></actionBinding>
 	</inputBinding>
-	
+
 	<l10n>
         <text name="input_DRIVE_LEVER_TOGGLE">
             <en>Enable / Disable Drive Lever</en>
@@ -59,6 +63,22 @@
         <text name="input_DRIVE_LEVER_TO_MAX">
             <en>Accelerate to max speed (Axis)</en>
             <de>Auf maximale Geschwingkeit beschleunigen (Achse)</de>
+        </text>
+        <text name="input_DRIVE_LEVER_SPEED_1">
+            <en>Accelerate (Separate Joystick!)</en>
+            <de>Beschleunigen (Separater Joystick!)</de>
+        </text>
+        <text name="input_DRIVE_LEVER_SPEED_2">
+            <en>Decelerate (Separate Joystick!)</en>
+            <de>Verlangsamen (Separater Joystick!)</de>
+        </text>
+        <text name="input_DRIVE_LEVER_DIRECTION_AND_MAX_1">
+            <en>Change Driving Direction (Separate Joystick!)</en>
+            <de>Fahrtrichtung wechseln (Separater Joystick!)</de>
+        </text>
+        <text name="input_DRIVE_LEVER_DIRECTION_AND_MAX_2">
+            <en>Accelerate to max speed (Separate Joystick!)</en>
+            <de>Auf maximale Geschwingkeit beschleunigen (Separater Joystick!)</de>
         </text>
 
 	</l10n>

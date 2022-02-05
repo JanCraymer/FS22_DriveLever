@@ -29,8 +29,10 @@ end
 function DriveLever:onLoad(savegame)
     local spec = self.spec_driveLever
 
-    spec.isEnabled = true
+    spec.version = "0.3.0.0"
     spec.debug = true
+
+    spec.isEnabled = true
 
     spec.vehicle = {}
     spec.vehicle.targetSpeed = 0
@@ -91,17 +93,23 @@ function DriveLever:loadConfigXml(fileName)
     local spec = self.spec_driveLever
     local xmlFile = loadXMLFile("DriveLever_XML", fileName)
 
-    spec.debug = getXMLBool(xmlFile, "DriveLever.debug")
-    spec.input.useFrontloaderAxes = getXMLBool(xmlFile, "DriveLever.useFrontloaderAxes")
-    spec.vehicle.brakeForce = getXMLFloat(xmlFile, "DriveLever.vehicleBrakeForce")
-    spec.input.forward.deadzone = getXMLFloat(xmlFile, "DriveLever.forwardDeadzone")
-    spec.input.forward.threshold = getXMLFloat(xmlFile, "DriveLever.forwardThreshold")
-    spec.input.backward.deadzone = getXMLFloat(xmlFile, "DriveLever.backwardDeadzone")
-    spec.input.backward.threshold = getXMLFloat(xmlFile, "DriveLever.backwardThreshold")
-    spec.input.toMax.deadzone = getXMLFloat(xmlFile, "DriveLever.toMaxDeadzone")
-    spec.input.changeDirection.deadzone = getXMLFloat(xmlFile, "DriveLever.changeDirectionDeadzone")
+    local version = getXMLString(xmlFile, "DriveLever.version")
+    spec.debug = Utils.getNoNil(getXMLBool(xmlFile, "DriveLever.debug"), spec.debug)
+    spec.input.useFrontloaderAxes = Utils.getNoNil(getXMLBool(xmlFile, "DriveLever.useFrontloaderAxes"), spec.input.useFrontloaderAxes)
+    spec.vehicle.brakeForce = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.vehicleBrakeForce"), spec.vehicle.brakeForce)
+    spec.vehicle.maxSpeedAdvance = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.maxSpeedAdvance"), spec.vehicle.maxSpeedAdvance)
+    spec.input.forward.deadzone = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.forwardDeadzone"), spec.input.forward.deadzone)
+    spec.input.forward.threshold = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.forwardThreshold"), spec.input.forward.threshold)
+    spec.input.backward.deadzone = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.backwardDeadzone"), spec.input.backward.deadzone)
+    spec.input.backward.threshold = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.backwardThreshold"), spec.input.backward.threshold)
+    spec.input.toMax.deadzone = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.toMaxDeadzone"), spec.input.toMax.deadzone)
+    spec.input.changeDirection.deadzone = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.changeDirectionDeadzone"), spec.input.changeDirection.deadzone)
 
     delete(xmlFile)
+
+    if version ~= spec.version then
+        self:saveConfigXml(fileName)
+    end
 
 end
 
@@ -109,9 +117,11 @@ function DriveLever:saveConfigXml(fileName)
     local spec = self.spec_driveLever
     local xmlFile = createXMLFile("DriveLever_XML", fileName, "DriveLever")
 
+    setXMLString(xmlFile, "DriveLever.version", spec.version)
     setXMLBool(xmlFile, "DriveLever.debug", spec.debug)
     setXMLBool(xmlFile, "DriveLever.useFrontloaderAxes", spec.input.useFrontloaderAxes)
     setXMLFloat(xmlFile, "DriveLever.vehicleBrakeForce", spec.vehicle.brakeForce)
+    setXMLFloat(xmlFile, "DriveLever.maxSpeedAdvance", spec.vehicle.maxSpeedAdvance)
     setXMLFloat(xmlFile, "DriveLever.forwardDeadzone", spec.input.forward.deadzone)
     setXMLFloat(xmlFile, "DriveLever.forwardThreshold", spec.input.forward.threshold)
     setXMLFloat(xmlFile, "DriveLever.backwardDeadzone", spec.input.backward.deadzone)
@@ -156,12 +166,16 @@ function DriveLever:onUpdate(dt)
                 -- change direction
                 if spec.input.changeDirection.enabled and spec.input.changeDirection.value > spec.input.changeDirection.deadzone then
                     spec.input.changeDirection.enabled = false
+                    spec.input.forward.enabled = false
+                    spec.input.backward.enabled = false
                     self:changeDirection()
                 end
 
                 -- to max
                 if spec.input.toMax.enabled and spec.input.toMax.value > spec.input.toMax.deadzone then
                     spec.input.toMax.enabled = false
+                    spec.input.forward.enabled = false
+                    spec.input.backward.enabled = false
                     self:accelerateToMax()
                 end
 

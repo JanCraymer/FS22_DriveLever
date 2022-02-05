@@ -1,6 +1,5 @@
 -- Drive lever specialization allowing to control the tractor with a joystick
 
-
 DriveLever = {}
 
 function DriveLever.prerequisitesPresent(specializations)
@@ -55,14 +54,14 @@ function DriveLever:onLoad(savegame)
     spec.input.forward.value = 0
     spec.input.forward.enabled = true
     spec.input.forward.isAnalog = false
-    spec.input.forward.deadzone = 0.1
+    spec.input.forward.deadzone = 0.01
     spec.input.forward.threshold = 1.1
 
     spec.input.backward = {}
     spec.input.backward.value = 0
     spec.input.backward.enabled = true
     spec.input.backward.isAnalog = false
-    spec.input.backward.deadzone = 0.1
+    spec.input.backward.deadzone = 0.01
     spec.input.backward.threshold = 0.8
 
     spec.input.changeDirection = {}
@@ -94,13 +93,13 @@ function DriveLever:loadConfigXml(fileName)
 
     spec.debug = getXMLBool(xmlFile, "DriveLever.debug")
     spec.input.useFrontloaderAxes = getXMLBool(xmlFile, "DriveLever.useFrontloaderAxes")
-    spec.vehicle.brakeForce = getXMLString(xmlFile, "DriveLever.vehicleBrakeForce")
-    spec.input.forward.deadzone = getXMLString(xmlFile, "DriveLever.forwardDeadzone")
-    spec.input.forward.threshold = getXMLString(xmlFile, "DriveLever.forwardThreshold")
-    spec.input.backward.deadzone = getXMLString(xmlFile, "DriveLever.backwardDeadzone")
-    spec.input.backward.threshold = getXMLString(xmlFile, "DriveLever.backwardThreshold")
-    spec.input.toMax.deadzone = getXMLString(xmlFile, "DriveLever.toMaxDeadzone")
-    spec.input.changeDirection.deadzone = getXMLString(xmlFile, "DriveLever.changeDirectionDeadzone")
+    spec.vehicle.brakeForce = getXMLFloat(xmlFile, "DriveLever.vehicleBrakeForce")
+    spec.input.forward.deadzone = getXMLFloat(xmlFile, "DriveLever.forwardDeadzone")
+    spec.input.forward.threshold = getXMLFloat(xmlFile, "DriveLever.forwardThreshold")
+    spec.input.backward.deadzone = getXMLFloat(xmlFile, "DriveLever.backwardDeadzone")
+    spec.input.backward.threshold = getXMLFloat(xmlFile, "DriveLever.backwardThreshold")
+    spec.input.toMax.deadzone = getXMLFloat(xmlFile, "DriveLever.toMaxDeadzone")
+    spec.input.changeDirection.deadzone = getXMLFloat(xmlFile, "DriveLever.changeDirectionDeadzone")
 
     delete(xmlFile)
 
@@ -230,7 +229,6 @@ function DriveLever:onUpdate(dt)
 
         -- self:debug(spec)
 
-
         -- reset for next frame
         spec.input.forward.value = 0
         spec.input.backward.value = 0
@@ -277,7 +275,7 @@ function DriveLever:saveSpeed()
 end
 
 function DriveLever:accelerateToMax()
-    print("DriveLever:accelerateToMax")
+    --print("DriveLever:accelerateToMax")
     local spec = self.spec_driveLever
 
     if spec.vehicle.isWorking then
@@ -296,7 +294,7 @@ function DriveLever:accelerateToMax()
 end
 
 function DriveLever:stop()
-    print("DriveLever:stop")
+    --print("DriveLever:stop")
     local spec = self.spec_driveLever
     spec.vehicle.stop = true
     self:changeSpeed(0)
@@ -314,7 +312,7 @@ function DriveLever:changeDirection(direction)
 end
 
 function DriveLever:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
-    print("DriveLever:onRegisterActionEvents")
+    --print("DriveLever:onRegisterActionEvents")
 
     if self.isClient then
         local spec = self.spec_driveLever
@@ -356,8 +354,9 @@ function DriveLever:onRegisterActionEvents(isActiveForInput, isActiveForInputIgn
     end
 end
 
+-- Enable / Disable action event for frontloader axes
 function DriveLever:toggleAxes(active)
-    print("DriveLever:toggleAxes")
+    --print("DriveLever:toggleAxes")
     local spec = self.spec_driveLever
 
     local axes = {}
@@ -444,7 +443,7 @@ function DriveLever:actionEventChangeDirectionAndMax(actionName, inputValue, cal
 end
 
 function DriveLever:actionEventSaveSpeed()
-    print("DriveLever:actionEventSaveSpeed")
+    --print("DriveLever:actionEventSaveSpeed")
     local spec = self.spec_driveLever
 
     local cruiseControlSpeed = math.floor(self:getCruiseControlSpeed())

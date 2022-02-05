@@ -10,6 +10,7 @@ function DriveLever.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "debug", DriveLever.debug)
     SpecializationUtil.registerFunction(vehicleType, "changeDirection", DriveLever.changeDirection)
     SpecializationUtil.registerFunction(vehicleType, "changeSpeed", DriveLever.changeSpeed)
+    SpecializationUtil.registerFunction(vehicleType, "getMaxSpeed", DriveLever.getMaxSpeed)
     SpecializationUtil.registerFunction(vehicleType, "stop", DriveLever.stop)
     SpecializationUtil.registerFunction(vehicleType, "accelerateToMax", DriveLever.accelerateToMax)
     SpecializationUtil.registerFunction(vehicleType, "toggleAxes", DriveLever.toggleAxes)
@@ -32,7 +33,7 @@ function DriveLever:onLoad(savegame)
     spec.version = "0.3.0.0"
     spec.debug = true
 
-    spec.isEnabled = true
+    spec.isEnabled = false
 
     spec.vehicle = {}
     spec.vehicle.targetSpeed = 0
@@ -110,7 +111,6 @@ function DriveLever:loadConfigXml(fileName)
     if version ~= spec.version then
         self:saveConfigXml(fileName)
     end
-
 end
 
 function DriveLever:saveConfigXml(fileName)
@@ -154,7 +154,7 @@ function DriveLever:onUpdate(dt)
         spec.vehicle.isWorking = isWorking
         spec.vehicle.maxSpeed.cruise = self:getCruiseControlMaxSpeed()
         if isWorking then
-            spec.vehicle.maxSpeed.cruise = math.floor(workingSpeedLimit)
+            spec.vehicle.maxSpeed.working = math.floor(workingSpeedLimit)
         end
 
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
@@ -257,9 +257,17 @@ end
 
 function DriveLever:changeSpeed(targetSpeed)
     local spec = self.spec_driveLever
+
+    targetSpeed = math.min(targetSpeed, self:getMaxSpeed())
+
+    if targetSpeed == spec.vehicle.targetSpeed then
+        return
+    end
+
     if targetSpeed < 0 then
         targetSpeed = 0
     end
+
     spec.vehicle.targetSpeed = targetSpeed
 
     if spec.vehicle.targetSpeed > 0 then
@@ -284,27 +292,28 @@ function DriveLever:changeSpeed(targetSpeed)
     --self:debug(spec.vehicle.targetSpeed)
 end
 
-function DriveLever:saveSpeed()
-
+function DriveLever:getMaxSpeed()
+    local spec = self.spec_driveLever
+    local maxSpeed = 0
+    if spec.vehicle.isWorking then
+        if spec.vehicle.maxSpeed.savedWorking > 0 then
+            maxSpeed = spec.vehicle.maxSpeed.savedWorking
+        else
+            maxSpeed = spec.vehicle.maxSpeed.working
+        end
+    else
+        if spec.vehicle.maxSpeed.savedCruise > 0 then
+            maxSpeed = spec.vehicle.maxSpeed.savedCruise
+        else
+            maxSpeed = spec.vehicle.maxSpeed.cruise
+        end
+    end
+    return maxSpeed
 end
 
 function DriveLever:accelerateToMax()
     --print("DriveLever:accelerateToMax")
-    local spec = self.spec_driveLever
-
-    if spec.vehicle.isWorking then
-        if spec.vehicle.maxSpeed.savedWorking > 0 then
-            self:changeSpeed(spec.vehicle.maxSpeed.savedWorking)
-        else
-            self:changeSpeed(spec.vehicle.maxSpeed.working)
-        end
-    else
-        if spec.vehicle.maxSpeed.savedCruise > 0 then
-            self:changeSpeed(spec.vehicle.maxSpeed.savedCruise)
-        else
-            self:changeSpeed(spec.vehicle.maxSpeed.cruise)
-        end
-    end
+    self:changeSpeed(self:getMaxSpeed())
 end
 
 function DriveLever:stop()
@@ -460,7 +469,8 @@ function DriveLever:actionEventSaveSpeed()
     --print("DriveLever:actionEventSaveSpeed")
     local spec = self.spec_driveLever
 
-    local cruiseControlSpeed = math.floor(self:getCruiseControlSpeed())
+    local cruiseControlSpeed = math.min(math.floor(self:getCruiseControlSpeed()), self:getMaxSpeed())
+
     if spec.vehicle.isWorking then
         if spec.vehicle.maxSpeed.savedWorking == 0 then
             spec.vehicle.maxSpeed.savedWorking = cruiseControlSpeed

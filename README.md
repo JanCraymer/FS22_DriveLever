@@ -4,7 +4,7 @@ Für eine deutsche Beschreibung, siehe unten.
 
 The mod allows to configure a joystick as a drive lever similar to the ones modern tractors use for acceleration/deceleration instead of a pedal. 
 
-Download can be found on the [releases page](https://github.com/JanCraymer/FS22_drivingStick/releases).
+Download can be found on the [releases page](https://github.com/JanCraymer/FS22_DriveLever/releases).
 
 ## Current Status
 
@@ -60,7 +60,7 @@ This mod mostly uses default functionality of the game, so it should most likely
 
 Dieser Mod ermöglicht es, einen Joystick als Fahrhebel zu konfigurieren, ähnlich derer, die in modernen Traktoren verbaut sind. 
 
-Downloads können auf der [Releases-Seite](https://github.com/JanCraymer/FS22_drivingStick/releases) gefunden werden.
+Downloads können auf der [Releases-Seite](https://github.com/JanCraymer/FS22_DriveLever/releases) gefunden werden.
 
 ## Aktueller Status
 

@@ -30,7 +30,7 @@ end
 function DriveLever:onLoad(savegame)
     local spec = self.spec_driveLever
 
-    spec.version = "0.3.0.0"
+    spec.version = "0.4.0.0"
     spec.debug = true
 
     spec.isEnabled = false
@@ -82,11 +82,20 @@ function DriveLever:onLoad(savegame)
     spec.input.delay.multiplier = 1
     spec.input.delay.current = 0
 
-    local fileName = g_currentMission.missionInfo.savegameDirectory .. "/DriveLever.xml"
+    local fileName = DriveLever.getFileName()
     if not fileExists(fileName) then
         self:saveConfigXml(fileName)
     else
         self:loadConfigXml(fileName)
+    end
+end
+
+function DriveLever.getFileName()
+    local xmlName = "DriveLever.xml"
+    if g_dedicatedServerInfo == nil then
+        return getUserProfileAppPath() .. "modSettings/" .. xmlName
+    else
+        return g_currentMission.missionInfo.savegameDirectory .. "/" .. xmlName
     end
 end
 
@@ -341,9 +350,6 @@ function DriveLever:onRegisterActionEvents(isActiveForInput, isActiveForInputIgn
         local spec = self.spec_driveLever
         self:clearActionEventsTable(spec.actionEvents)
 
-        self:debug(isActiveForInput)
-        self:debug(isActiveForInputIgnoreSelection)
-
         if isActiveForInputIgnoreSelection then
 
             local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TOGGLE, self, DriveLever.actionEventToggle, false, true, false, true, nil)
@@ -371,8 +377,6 @@ function DriveLever:onRegisterActionEvents(isActiveForInput, isActiveForInputIgn
             end
 
             self:toggleAxes(spec.isEnabled)
-            self:debug(spec.actionEvents)
-
         end
     end
 end

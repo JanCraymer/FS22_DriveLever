@@ -43,6 +43,7 @@ function DriveLever:onLoad(savegame)
     spec.vehicle.stop = false
     spec.vehicle.isStopped = nil
     spec.vehicle.isWorking = false
+    spec.vehicle.limitAcceleration = false
     spec.vehicle.maxSpeed = {}
     spec.vehicle.maxSpeed.cruise = 0
     spec.vehicle.maxSpeed.working = 0
@@ -305,16 +306,14 @@ function DriveLever:getMaxSpeed()
     local spec = self.spec_driveLever
     local maxSpeed = 0
     if spec.vehicle.isWorking then
-        if spec.vehicle.maxSpeed.savedWorking > 0 then
+        maxSpeed = spec.vehicle.maxSpeed.working
+        if spec.vehicle.limitAcceleration and spec.vehicle.maxSpeed.savedWorking > 0 then
             maxSpeed = spec.vehicle.maxSpeed.savedWorking
-        else
-            maxSpeed = spec.vehicle.maxSpeed.working
         end
     else
-        if spec.vehicle.maxSpeed.savedCruise > 0 then
+        maxSpeed = spec.vehicle.maxSpeed.cruise
+        if spec.vehicle.limitAcceleration and spec.vehicle.maxSpeed.savedCruise > 0 then
             maxSpeed = spec.vehicle.maxSpeed.savedCruise
-        else
-            maxSpeed = spec.vehicle.maxSpeed.cruise
         end
     end
     return maxSpeed
@@ -322,7 +321,21 @@ end
 
 function DriveLever:accelerateToMax()
     --print("DriveLever:accelerateToMax")
-    self:changeSpeed(self:getMaxSpeed())
+    local spec = self.spec_driveLever
+
+    if spec.vehicle.isWorking then
+        if spec.vehicle.maxSpeed.savedWorking > 0 then
+            self:changeSpeed(spec.vehicle.maxSpeed.savedWorking)
+        else
+            self:changeSpeed(spec.vehicle.maxSpeed.working)
+        end
+    else
+        if spec.vehicle.maxSpeed.savedCruise > 0 then
+            self:changeSpeed(spec.vehicle.maxSpeed.savedCruise)
+        else
+            self:changeSpeed(spec.vehicle.maxSpeed.cruise)
+        end
+    end
 end
 
 function DriveLever:stop()
@@ -355,6 +368,8 @@ function DriveLever:onRegisterActionEvents(isActiveForInput, isActiveForInputIgn
             local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TOGGLE, self, DriveLever.actionEventToggle, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
             _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED, self, DriveLever.actionEventSaveSpeed, false, true, false, true, nil)
+            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
+            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TOGGLE_ACCELERATION_LIMIT, self, DriveLever.actionToggleAccelerationLimit, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)
             if spec.input.useFrontloaderAxes then
                 _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.AXIS_FRONTLOADER_ARM, self, DriveLever.actionEventChangeSpeed, false, true, true, true, nil)
@@ -491,6 +506,11 @@ function DriveLever:actionEventSaveSpeed()
     self:debug(spec.vehicle.maxSpeed)
 end
 
+function DriveLever:actionToggleAccelerationLimit()
+    local spec = self.spec_driveLever
+    spec.vehicle.limitAcceleration = not spec.vehicle.limitAcceleration
+end
+
 function DriveLever:onDraw()
     local spec = self.spec_driveLever
 
@@ -511,7 +531,12 @@ function DriveLever:onDraw()
         else
             setTextColor(0.000300, 0.564700, 0.982200, 1)
         end
-        renderText(x, y, textSize, "max " .. tostring(maxSpeedText))
+
+        if spec.vehicle.limitAcceleration then
+            renderText(x, y, textSize, "Max " .. tostring(maxSpeedText))
+        else
+            renderText(x, y, textSize, "Mem " .. tostring(maxSpeedText))
+        end
     end
 end
 

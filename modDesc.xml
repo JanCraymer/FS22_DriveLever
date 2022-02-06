@@ -20,6 +20,7 @@
     <actions>
 		<action name="DRIVE_LEVER_TOGGLE" axisType="HALF" />
         <action name="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
+        <action name="DRIVE_LEVER_TOGGLE_ACCELERATION_LIMIT" axisType="HALF" />
 <!--        <action name="DRIVE_LEVER_FORWARD" axisType="HALF" />-->
 <!--        <action name="DRIVE_LEVER_BACKWARD" axisType="HALF" />-->
         <action name="DRIVE_LEVER_SPEED" axisType="FULL" />
@@ -31,6 +32,7 @@
 	<inputBinding>
 		<actionBinding action="DRIVE_LEVER_TOGGLE"></actionBinding>
 		<actionBinding action="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_TOGGLE_ACCELERATION_LIMIT"></actionBinding>
 <!--		<actionBinding action="DRIVE_LEVER_FORWARD"></actionBinding>-->
 <!--		<actionBinding action="DRIVE_LEVER_BACKWARD"></actionBinding>-->
 		<actionBinding action="DRIVE_LEVER_SPEED"></actionBinding>
@@ -79,6 +81,10 @@
         <text name="input_DRIVE_LEVER_DIRECTION_AND_MAX_2">
             <en>Accelerate to max speed (Separate Joystick!)</en>
             <de>Auf maximale Geschwingkeit beschleunigen (Separater Joystick!)</de>
+        </text>
+            <text name="input_DRIVE_LEVER_TOGGLE_ACCELERATION_LIMIT">
+            <en>Toggle Acceleration Limit</en>
+            <de>Beschleunigungsbegrenzung umschalten</de>
         </text>
 
 	</l10n>

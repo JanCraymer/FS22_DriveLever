@@ -43,7 +43,7 @@ function DriveLever:onLoad(savegame)
     spec.vehicle.stop = false
     spec.vehicle.isStopped = nil
     spec.vehicle.isWorking = false
-    spec.vehicle.limitAcceleration = false
+    spec.vehicle.limitAcceleration = true
     spec.vehicle.maxSpeed = {}
     spec.vehicle.maxSpeed.cruise = 0
     spec.vehicle.maxSpeed.working = 0

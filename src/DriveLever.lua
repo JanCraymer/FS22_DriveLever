@@ -503,7 +503,7 @@ function DriveLever:actionEventSaveSpeed()
             spec.vehicle.maxSpeed.savedCruise = 0
         end
     end
-    self:debug(spec.vehicle.maxSpeed)
+    --self:debug(spec.vehicle.maxSpeed)
 end
 
 function DriveLever:actionToggleAccelerationLimit()

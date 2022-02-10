@@ -30,7 +30,7 @@ end
 function DriveLever:onLoad(savegame)
     local spec = self.spec_driveLever
 
-    spec.version = "0.4.0.0"
+    spec.version = "0.5.0.0"
     spec.debug = true
 
     spec.isEnabled = false
@@ -189,6 +189,12 @@ function DriveLever:onUpdate(dt)
                     self:accelerateToMax()
                 end
 
+                -- stop
+                if spec.input.backward.isAnalog and spec.input.backward.value > spec.input.backward.threshold then
+                    spec.input.backward.enabled = false
+                    self:stop()
+                end
+
                 if spec.input.delay.current < 0 then
                     spec.input.delay.current = spec.input.delay.value
                     -- local motor = self.spec_motorized.motor
@@ -217,25 +223,20 @@ function DriveLever:onUpdate(dt)
 
                     -- backward
                     if spec.input.backward.enabled and spec.input.backward.value > spec.input.backward.deadzone then
-                        if spec.input.backward.isAnalog and spec.input.backward.value > spec.input.backward.threshold then
-                            spec.input.backward.enabled = false
-                            self:stop()
+                        -- change speed
+                        local newSpeed = 0
+                        if not spec.vehicle.isStopped and self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then
+                            newSpeed = math.floor(lastSpeed)
                         else
-                            -- change speed
-                            local newSpeed = 0
-                            if not spec.vehicle.isStopped and self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then
-                                newSpeed = math.floor(lastSpeed)
-                            else
-                                local speedChange = calculateSpeedChangeStep(spec.input.backward.value)
-                                newSpeed = spec.vehicle.targetSpeed - speedChange
-                            end
-
-                            if newSpeed > lastSpeed then
-                                newSpeed = math.floor(lastSpeed)
-                            end
-
-                            self:changeSpeed(newSpeed)
+                            local speedChange = calculateSpeedChangeStep(spec.input.backward.value)
+                            newSpeed = spec.vehicle.targetSpeed - speedChange
                         end
+
+                        if newSpeed > lastSpeed then
+                            newSpeed = math.floor(lastSpeed)
+                        end
+
+                        self:changeSpeed(newSpeed)
                     end
                 end
                 spec.input.changed = false
@@ -458,7 +459,7 @@ function DriveLever:actionEventChangeDirection(actionName, inputValue, callbackS
     local spec = self.spec_driveLever
     spec.input.changed = true
     spec.input.changeDirection.value = inputValue
-    --self:debug(spec.input.changeDirection)
+    self:debug(spec.input.changeDirection)
 end
 
 function DriveLever:actionEventToMax(actionName, inputValue, callbackState, isAnalog)

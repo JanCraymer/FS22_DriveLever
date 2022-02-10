@@ -30,7 +30,7 @@ end
 function DriveLever:onLoad(savegame)
     local spec = self.spec_driveLever
 
-    spec.version = "0.5.0.0"
+    spec.version = "0.4.0.0"
     spec.debug = true
 
     spec.isEnabled = false

@@ -21,24 +21,24 @@
 		<action name="DRIVE_LEVER_TOGGLE" axisType="HALF" />
         <action name="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED" axisType="HALF" />
         <action name="DRIVE_LEVER_TOGGLE_ACCELERATION_LIMIT" axisType="HALF" />
-<!--        <action name="DRIVE_LEVER_FORWARD" axisType="HALF" />-->
-<!--        <action name="DRIVE_LEVER_BACKWARD" axisType="HALF" />-->
-        <action name="DRIVE_LEVER_SPEED" axisType="FULL" />
-<!--        <action name="DRIVE_LEVER_CHANGE_DIRECTION" axisType="HALF" />-->
-<!--        <action name="DRIVE_LEVER_TO_MAX" axisType="HALF" />-->
-        <action name="DRIVE_LEVER_DIRECTION_AND_MAX" axisType="FULL" />
+        <action name="DRIVE_LEVER_FORWARD" axisType="HALF" />
+        <action name="DRIVE_LEVER_BACKWARD" axisType="HALF" />
+<!--        <action name="DRIVE_LEVER_SPEED" axisType="FULL" />-->
+        <action name="DRIVE_LEVER_CHANGE_DIRECTION" axisType="HALF" />
+        <action name="DRIVE_LEVER_TO_MAX" axisType="HALF" />
+<!--        <action name="DRIVE_LEVER_DIRECTION_AND_MAX" axisType="FULL" />-->
 	</actions>
 
 	<inputBinding>
 		<actionBinding action="DRIVE_LEVER_TOGGLE"></actionBinding>
 		<actionBinding action="DRIVE_LEVER_SAVE_CURRENT_CRUISECONTROL_SPEED"></actionBinding>
 		<actionBinding action="DRIVE_LEVER_TOGGLE_ACCELERATION_LIMIT"></actionBinding>
-<!--		<actionBinding action="DRIVE_LEVER_FORWARD"></actionBinding>-->
-<!--		<actionBinding action="DRIVE_LEVER_BACKWARD"></actionBinding>-->
-		<actionBinding action="DRIVE_LEVER_SPEED"></actionBinding>
-<!--		<actionBinding action="DRIVE_LEVER_CHANGE_DIRECTION"></actionBinding>-->
-<!--		<actionBinding action="DRIVE_LEVER_TO_MAX"></actionBinding>-->
-		<actionBinding action="DRIVE_LEVER_DIRECTION_AND_MAX"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_FORWARD"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_BACKWARD"></actionBinding>
+<!--		<actionBinding action="DRIVE_LEVER_SPEED"></actionBinding>-->
+		<actionBinding action="DRIVE_LEVER_CHANGE_DIRECTION"></actionBinding>
+		<actionBinding action="DRIVE_LEVER_TO_MAX"></actionBinding>
+<!--		<actionBinding action="DRIVE_LEVER_DIRECTION_AND_MAX"></actionBinding>-->
 	</inputBinding>
 
 	<l10n>

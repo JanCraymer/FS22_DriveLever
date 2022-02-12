@@ -378,18 +378,18 @@ function DriveLever:onRegisterActionEvents(isActiveForInput, isActiveForInputIgn
                 _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.AXIS_FRONTLOADER_TOOL, self, DriveLever.actionEventChangeDirectionAndMax, false, true, true, true, nil)
                 g_inputBinding:setActionEventTextPriority(actionEventId, false)
             else
-                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_FORWARD, self, DriveLever.actionEventForward, false, true, true, true, nil)
-                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
-                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_BACKWARD, self, DriveLever.actionEventBackward, false, true, true, true, nil)
-                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
-                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_CHANGE_DIRECTION, self, DriveLever.actionEventChangeDirection, false, true, true, true, nil)
-                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
-                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TO_MAX, self, DriveLever.actionEventToMax, false, true, true, true, nil)
-                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
-                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_SPEED, self, DriveLever.actionEventChangeSpeed, false, true, true, true, nil)
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_FORWARD, self, DriveLever.actionEventForward, false, true, true, true, nil)
                 g_inputBinding:setActionEventTextPriority(actionEventId, false)
-                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_DIRECTION_AND_MAX, self, DriveLever.actionEventChangeDirectionAndMax, false, true, true, true, nil)
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_BACKWARD, self, DriveLever.actionEventBackward, false, true, true, true, nil)
                 g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_CHANGE_DIRECTION, self, DriveLever.actionEventChangeDirection, false, true, true, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TO_MAX, self, DriveLever.actionEventToMax, false, true, true, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_SPEED, self, DriveLever.actionEventChangeSpeed, false, true, true, true, nil)
+                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
+                --_, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_DIRECTION_AND_MAX, self, DriveLever.actionEventChangeDirectionAndMax, false, true, true, true, nil)
+                --g_inputBinding:setActionEventTextPriority(actionEventId, false)
             end
 
             self:toggleAxes(spec.isEnabled)
@@ -400,15 +400,17 @@ end
 -- Enable / Disable action event for frontloader axes
 function DriveLever:toggleAxes(active)
     --print("DriveLever:toggleAxes")
-    local spec = self.spec_driveLever
+    if self.isClient then
+        local spec = self.spec_driveLever
 
-    local axes = {}
-    axes.actionEventChangeSpeed = spec.actionEvents[InputAction.AXIS_FRONTLOADER_ARM]
-    axes.actionEventChangeDirectionAndMax = spec.actionEvents[InputAction.AXIS_FRONTLOADER_TOOL]
+        local axes = {}
+        axes.actionEventChangeSpeed = spec.actionEvents[InputAction.AXIS_FRONTLOADER_ARM]
+        axes.actionEventChangeDirectionAndMax = spec.actionEvents[InputAction.AXIS_FRONTLOADER_TOOL]
 
-    for k, v in pairs(axes) do
-        --print("toggle: " .. k)
-        g_inputBinding:setActionEventActive(v.actionEventId, active)
+        for k, v in pairs(axes) do
+            --print("toggle: " .. k)
+            g_inputBinding:setActionEventActive(v.actionEventId, active)
+        end
     end
 end
 

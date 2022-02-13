@@ -597,6 +597,7 @@ end
 function DriveLever:onReadStream(streamId, connection)
     local spec = self.spec_driveLever
     spec.isEnabled = streamReadBool(streamId)
+    self:toggleAxes(spec.isEnabled)
 end
 
 function DriveLever:debug(v)

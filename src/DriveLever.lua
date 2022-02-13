@@ -371,9 +371,13 @@ function DriveLever:changeDirection(direction)
     local motor = self.spec_motorized.motor
 
     if direction == nil then
-        motor:changeDirection(-motor.currentDirection)
+        MotorGearShiftEvent.sendEvent(self, MotorGearShiftEvent.TYPE_DIRECTION_CHANGE)
     else
-        motor:changeDirection(direction)
+        if direction > 0 then
+            MotorGearShiftEvent.sendEvent(self, MotorGearShiftEvent.TYPE_DIRECTION_CHANGE_POS)
+        else
+            MotorGearShiftEvent.sendEvent(self, MotorGearShiftEvent.TYPE_DIRECTION_CHANGE_NEG)
+        end
     end
 end
 

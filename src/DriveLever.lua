@@ -26,6 +26,8 @@ function DriveLever.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onDraw", DriveLever);
     SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", DriveLever)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", DriveLever)
+    SpecializationUtil.registerEventListener(vehicleType, "onReadStream", DriveLever)
+    SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", DriveLever)
 end
 
 function DriveLever:onLoad(savegame)

@@ -39,7 +39,7 @@ To use the frontloader you have to disable the drive lever via the assigned butt
 
 ### 2. Use a dedicated Joystick
 If you want to use a dedicated joystick as a drive lever you can assign axes to separate bindings in the input options.
-You also have to change a config value in the `DriveLever.xml` file that you can find in your savegame folder.
+You also have to change a config value in the `DriveLever.xml` file that you can find in your modSettings folder.
 If the file is not there please start the savegame and enable the mod once. The file should appear during the loading process.
 Within the file you need to change this line
 
@@ -98,7 +98,7 @@ Natürlich kannst du weiterhin auch den Frontlader nutzen, musst dafür aber den
 
 ### 2. Dedizierter Joystick
 Falls du noch einen zweiten Joystick zur Verfügung hast, kannst du diesen auch einzeln für den Fahrhebel konfigurieren. Dazu musst du die separaten Achsen entsprechend in der Tastenbelegung konfigurieren.
-Desweiteren muss dann noch eine Option in der `DriveLever.xml` geändert werden. Diese findest du im Ordner deines Savegames.
+Desweiteren muss dann noch eine Option in der `DriveLever.xml` geändert werden. Diese findest du im modSettings-Ordner.
 Falls die Datei nicht da ist, musst du zunächst einmal den Mod aktivieren und dann das Savegame starten. Die Datei sollte während des Ladevorgangs erscheinen.
 In der Datei muss folgende Zeile geändert werden:
 

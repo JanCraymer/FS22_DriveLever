@@ -11,7 +11,8 @@ function DriveLever.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "changeDirection", DriveLever.changeDirection)
     SpecializationUtil.registerFunction(vehicleType, "changeSpeed", DriveLever.changeSpeed)
     SpecializationUtil.registerFunction(vehicleType, "getMaxSpeed", DriveLever.getMaxSpeed)
-    SpecializationUtil.registerFunction(vehicleType, "stop", DriveLever.stop)
+    SpecializationUtil.registerFunction(vehicleType, "setStop", DriveLever.setStop)
+    SpecializationUtil.registerFunction(vehicleType, "setEnabled", DriveLever.setEnabled)
     SpecializationUtil.registerFunction(vehicleType, "accelerateToMax", DriveLever.accelerateToMax)
     SpecializationUtil.registerFunction(vehicleType, "toggleAxes", DriveLever.toggleAxes)
     SpecializationUtil.registerFunction(vehicleType, "saveConfigXml", DriveLever.saveConfigXml)
@@ -23,6 +24,8 @@ function DriveLever.registerEventListeners(vehicleType)
     SpecializationUtil.registerEventListener(vehicleType, "onLoad", DriveLever);
     SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", DriveLever);
     SpecializationUtil.registerEventListener(vehicleType, "onDraw", DriveLever);
+    SpecializationUtil.registerEventListener(vehicleType, "onReadUpdateStream", DriveLever)
+    SpecializationUtil.registerEventListener(vehicleType, "onWriteUpdateStream", DriveLever)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", DriveLever)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", DriveLever)
 end
@@ -82,6 +85,8 @@ function DriveLever:onLoad(savegame)
     spec.input.delay.value = 250
     spec.input.delay.multiplier = 1
     spec.input.delay.current = 0
+
+    spec.dirtyFlag = self:getNextDirtyFlag()
 
     local fileName = DriveLever.getFileName()
     if not fileExists(fileName) then
@@ -145,120 +150,123 @@ end
 
 function DriveLever:onUpdate(dt)
     local spec = self.spec_driveLever
-    local lastSpeed = self:getLastSpeed()
 
-    if lastSpeed > 0.4 then
-        spec.vehicle.isStopped = false
-        if spec.vehicle.stop then
-            self:brake(spec.vehicle.brakeForce)
-        end
-    else
-        spec.vehicle.isStopped = true
-        spec.vehicle.stop = false
-    end
+    if spec.isEnabled then
+        local lastSpeed = self:getLastSpeed()
 
-    if self.isClient and spec.isEnabled then
-
-        -- determine max speeds
-        local workingSpeedLimit, isWorking = self:getSpeedLimit(true)
-        spec.vehicle.isWorking = isWorking
-        spec.vehicle.maxSpeed.cruise = self:getCruiseControlMaxSpeed()
-        if isWorking then
-            spec.vehicle.maxSpeed.working = math.floor(workingSpeedLimit)
+        if lastSpeed > 0.4 then
+            spec.vehicle.isStopped = false
+            if spec.vehicle.stop then
+                self:brake(spec.vehicle.brakeForce)
+            end
+        else
+            spec.vehicle.isStopped = true
+            self:setStop(false)
         end
 
-        if self.isActiveForInputIgnoreSelectionIgnoreAI then
+        if self.isClient then
 
-            spec.input.delay.current = spec.input.delay.current - (dt * spec.input.delay.multiplier)
+            -- determine max speeds
+            local workingSpeedLimit, isWorking = self:getSpeedLimit(true)
+            spec.vehicle.isWorking = isWorking
+            spec.vehicle.maxSpeed.cruise = self:getCruiseControlMaxSpeed()
+            if isWorking then
+                spec.vehicle.maxSpeed.working = math.floor(workingSpeedLimit)
+            end
 
-            if spec.input.changed then
+            if self.isActiveForInputIgnoreSelectionIgnoreAI then
 
-                -- change direction
-                if spec.input.changeDirection.enabled and spec.input.changeDirection.value > spec.input.changeDirection.deadzone then
-                    spec.input.changeDirection.enabled = false
-                    spec.input.forward.enabled = false
-                    spec.input.backward.enabled = false
-                    self:changeDirection()
-                end
+                spec.input.delay.current = spec.input.delay.current - (dt * spec.input.delay.multiplier)
 
-                -- to max
-                if spec.input.toMax.enabled and spec.input.toMax.value > spec.input.toMax.deadzone then
-                    spec.input.toMax.enabled = false
-                    spec.input.forward.enabled = false
-                    spec.input.backward.enabled = false
-                    self:accelerateToMax()
-                end
+                if spec.input.changed then
 
-                -- stop
-                if spec.input.backward.isAnalog and spec.input.backward.value > spec.input.backward.threshold then
-                    spec.input.backward.enabled = false
-                    self:stop()
-                end
+                    -- change direction
+                    if spec.input.changeDirection.enabled and spec.input.changeDirection.value > spec.input.changeDirection.deadzone then
+                        spec.input.changeDirection.enabled = false
+                        spec.input.forward.enabled = false
+                        spec.input.backward.enabled = false
+                        self:changeDirection()
+                    end
 
-                if spec.input.delay.current < 0 then
-                    spec.input.delay.current = spec.input.delay.value
-                    -- local motor = self.spec_motorized.motor
-                    -- local direction = motor.currentDirection
+                    -- to max
+                    if spec.input.toMax.enabled and spec.input.toMax.value > spec.input.toMax.deadzone then
+                        spec.input.toMax.enabled = false
+                        spec.input.forward.enabled = false
+                        spec.input.backward.enabled = false
+                        self:accelerateToMax()
+                    end
 
-                    -- forward
-                    if spec.input.forward.enabled and spec.input.forward.value > spec.input.forward.deadzone then
-                        if spec.input.forward.isAnalog and spec.input.forward.value > spec.input.forward.threshold then
-                            self:accelerateToMax()
-                        else
+                    -- stop
+                    if spec.input.backward.isAnalog and spec.input.backward.value > spec.input.backward.threshold then
+                        spec.input.backward.enabled = false
+                        self:setStop(true)
+                    end
+
+                    if spec.input.delay.current < 0 then
+                        spec.input.delay.current = spec.input.delay.value
+                        -- local motor = self.spec_motorized.motor
+                        -- local direction = motor.currentDirection
+
+                        -- forward
+                        if spec.input.forward.enabled and spec.input.forward.value > spec.input.forward.deadzone then
+                            if spec.input.forward.isAnalog and spec.input.forward.value > spec.input.forward.threshold then
+                                self:accelerateToMax()
+                            else
+                                -- change speed
+                                local newSpeed = 0
+                                if not spec.vehicle.isStopped and self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then
+                                    newSpeed = math.floor(lastSpeed)
+                                else
+                                    local speedChange = calculateSpeedChangeStep(spec.input.forward.value)
+                                    newSpeed = spec.vehicle.targetSpeed + speedChange
+                                end
+
+                                if newSpeed - lastSpeed > spec.vehicle.maxSpeedAdvance then
+                                    newSpeed = math.ceil(lastSpeed) + spec.vehicle.maxSpeedAdvance
+                                end
+                                self:changeSpeed(newSpeed)
+                            end
+                        end
+
+                        -- backward
+                        if spec.input.backward.enabled and spec.input.backward.value > spec.input.backward.deadzone then
                             -- change speed
                             local newSpeed = 0
                             if not spec.vehicle.isStopped and self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then
                                 newSpeed = math.floor(lastSpeed)
                             else
-                                local speedChange = calculateSpeedChangeStep(spec.input.forward.value)
-                                newSpeed = spec.vehicle.targetSpeed + speedChange
+                                local speedChange = calculateSpeedChangeStep(spec.input.backward.value)
+                                newSpeed = spec.vehicle.targetSpeed - speedChange
                             end
 
-                            if newSpeed - lastSpeed > spec.vehicle.maxSpeedAdvance then
-                                newSpeed = math.ceil(lastSpeed) + spec.vehicle.maxSpeedAdvance
+                            if newSpeed > lastSpeed then
+                                newSpeed = math.floor(lastSpeed)
                             end
+
                             self:changeSpeed(newSpeed)
                         end
                     end
+                    spec.input.changed = false
+                else
+                    spec.input.forward.enabled = true
+                    spec.input.backward.enabled = true
+                    spec.input.changeDirection.enabled = true
+                    spec.input.toMax.enabled = true
 
-                    -- backward
-                    if spec.input.backward.enabled and spec.input.backward.value > spec.input.backward.deadzone then
-                        -- change speed
-                        local newSpeed = 0
-                        if not spec.vehicle.isStopped and self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then
-                            newSpeed = math.floor(lastSpeed)
-                        else
-                            local speedChange = calculateSpeedChangeStep(spec.input.backward.value)
-                            newSpeed = spec.vehicle.targetSpeed - speedChange
-                        end
-
-                        if newSpeed > lastSpeed then
-                            newSpeed = math.floor(lastSpeed)
-                        end
-
-                        self:changeSpeed(newSpeed)
-                    end
+                    spec.input.delay.current = 0
+                    spec.input.delay.multiplier = 1
                 end
-                spec.input.changed = false
-            else
-                spec.input.forward.enabled = true
-                spec.input.backward.enabled = true
-                spec.input.changeDirection.enabled = true
-                spec.input.toMax.enabled = true
 
-                spec.input.delay.current = 0
-                spec.input.delay.multiplier = 1
             end
 
+            -- self:debug(spec)
+
+            -- reset for next frame
+            spec.input.forward.value = 0
+            spec.input.backward.value = 0
+            spec.input.changeDirection.value = 0
+            spec.input.toMax.value = 0
         end
-
-        -- self:debug(spec)
-
-        -- reset for next frame
-        spec.input.forward.value = 0
-        spec.input.backward.value = 0
-        spec.input.changeDirection.value = 0
-        spec.input.toMax.value = 0
     end
 end
 
@@ -286,7 +294,7 @@ function DriveLever:changeSpeed(targetSpeed)
             spec.vehicle.targetSpeed = 0.5
         end
         local spec_drivable = self.spec_drivable
-        spec.vehicle.stop = false
+        self:setStop(false)
         self:setCruiseControlMaxSpeed(spec.vehicle.targetSpeed, spec_drivable.cruiseControl.maxSpeedReverse)
 
         if spec.vehicle.targetSpeed ~= spec.vehicle.targetSpeedSent then
@@ -339,21 +347,39 @@ function DriveLever:accelerateToMax()
     end
 end
 
-function DriveLever:stop()
-    --print("DriveLever:stop")
+function DriveLever:setEnabled(enabled)
     local spec = self.spec_driveLever
-    spec.vehicle.stop = true
-    self:changeSpeed(0)
-    self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_OFF)
+    if enabled ~= spec.isEnabled then
+        spec.isEnabled = enabled
+        self:raiseDirtyFlags(spec.dirtyFlag)
+    end
+end
+
+function DriveLever:setStop(stop)
+    local spec = self.spec_driveLever
+    if stop ~= spec.vehicle.stop then
+        spec.vehicle.stop = stop
+        self:raiseDirtyFlags(spec.dirtyFlag)
+
+        if spec.vehicle.stop then
+            self:changeSpeed(0)
+            self:setCruiseControlState(Drivable.CRUISECONTROL_STATE_OFF)
+        end
+
+    end
 end
 
 function DriveLever:changeDirection(direction)
     local motor = self.spec_motorized.motor
 
     if direction == nil then
-        motor:changeDirection(-motor.currentDirection)
+        MotorGearShiftEvent.sendEvent(self, MotorGearShiftEvent.TYPE_DIRECTION_CHANGE)
     else
-        motor:changeDirection(direction)
+        if direction > 0 then
+            MotorGearShiftEvent.sendEvent(self, MotorGearShiftEvent.TYPE_DIRECTION_CHANGE_POS)
+        else
+            MotorGearShiftEvent.sendEvent(self, MotorGearShiftEvent.TYPE_DIRECTION_CHANGE_NEG)
+        end
     end
 end
 
@@ -416,7 +442,7 @@ end
 
 function DriveLever:actionEventToggle(actionName, inputValue, callbackState, isAnalog)
     local spec = self.spec_driveLever
-    spec.isEnabled = not spec.isEnabled
+    self:setEnabled(not spec.isEnabled)
     self:toggleAxes(spec.isEnabled)
 end
 
@@ -543,14 +569,37 @@ function DriveLever:onDraw()
     end
 end
 
+function DriveLever:onWriteUpdateStream(streamId, connection, dirtyMask)
+    --print("DriveLever:onWriteUpdateStream")
+    local spec = self.spec_driveLever
+    if streamWriteBool(streamId, bitAND(dirtyMask, spec.dirtyFlag) ~= 0) then
+        streamWriteBool(streamId, spec.isEnabled)
+        streamWriteBool(streamId, spec.vehicle.stop)
+    end
+    --if not connection:getIsServer() then
+    --end
+end
+
+function DriveLever:onReadUpdateStream(streamId, timestamp, connection)
+    --print("DriveLever:onReadUpdateStream")
+    local spec = self.spec_driveLever
+    if streamReadBool(streamId) then
+        spec.isEnabled = streamReadBool(streamId)
+        spec.vehicle.stop = streamReadBool(streamId)
+    end
+    --if connection:getIsServer() then
+    --end
+end
+
 function DriveLever:onWriteStream(streamId, connection)
     local spec = self.spec_driveLever
-    streamWriteBool(streamId, spec.vehicle.stop)
+    streamWriteBool(streamId, spec.isEnabled)
 end
 
 function DriveLever:onReadStream(streamId, connection)
     local spec = self.spec_driveLever
-    spec.vehicle.stop = streamReadBool(streamId)
+    spec.isEnabled = streamReadBool(streamId)
+    self:toggleAxes(spec.isEnabled)
 end
 
 function DriveLever:debug(v)

@@ -34,7 +34,7 @@ function DriveLever:onLoad(savegame)
     local spec = self.spec_driveLever
 
     spec.version = "0.4.0.0"
-    spec.debug = true
+    spec.debug = false
 
     spec.isEnabled = false
 
@@ -487,7 +487,7 @@ function DriveLever:actionEventChangeDirection(actionName, inputValue, callbackS
     local spec = self.spec_driveLever
     spec.input.changed = true
     spec.input.changeDirection.value = inputValue
-    self:debug(spec.input.changeDirection)
+    --self:debug(spec.input.changeDirection)
 end
 
 function DriveLever:actionEventToMax(actionName, inputValue, callbackState, isAnalog)

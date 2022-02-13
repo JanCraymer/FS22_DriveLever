@@ -589,6 +589,16 @@ function DriveLever:onReadUpdateStream(streamId, timestamp, connection)
     --end
 end
 
+function DriveLever:onWriteStream(streamId, connection)
+    local spec = self.spec_driveLever
+    streamWriteBool(streamId, spec.isEnabled)
+end
+
+function DriveLever:onReadStream(streamId, connection)
+    local spec = self.spec_driveLever
+    spec.isEnabled = streamReadBool(streamId)
+end
+
 function DriveLever:debug(v)
     local spec = self.spec_driveLever
 

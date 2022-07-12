@@ -33,7 +33,7 @@ end
 function DriveLever:onLoad(savegame)
     local spec = self.spec_driveLever
 
-    spec.version = "0.4.0.0"
+    spec.version = "0.5.0.0"
     spec.debug = false
 
     spec.isEnabled = false
@@ -390,7 +390,8 @@ function DriveLever:onRegisterActionEvents(isActiveForInput, isActiveForInputIgn
         local spec = self.spec_driveLever
         self:clearActionEventsTable(spec.actionEvents)
 
-        if isActiveForInputIgnoreSelection then
+        --if isActiveForInputIgnoreSelection then
+        if self:getIsActiveForInput(true) and spec ~= nil then
 
             local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.DRIVE_LEVER_TOGGLE, self, DriveLever.actionEventToggle, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_LOW)

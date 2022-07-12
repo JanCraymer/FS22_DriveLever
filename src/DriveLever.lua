@@ -51,7 +51,9 @@ function DriveLever:onLoad(savegame)
     spec.vehicle.maxSpeed.cruise = 0
     spec.vehicle.maxSpeed.working = 0
     spec.vehicle.maxSpeed.savedCruise = 0
+    spec.vehicle.maxSpeed.savedCruiseToggle = 0
     spec.vehicle.maxSpeed.savedWorking = 0
+    spec.vehicle.maxSpeed.savedWorkingToggle = 0
 
     spec.input = {}
     spec.input.changed = false
@@ -334,13 +336,21 @@ function DriveLever:accelerateToMax()
 
     if spec.vehicle.isWorking then
         if spec.vehicle.maxSpeed.savedWorking > 0 then
-            self:changeSpeed(spec.vehicle.maxSpeed.savedWorking)
+            if spec.vehicle.maxSpeed.savedWorkingToggle > 0 and spec.vehicle.targetSpeed == spec.vehicle.maxSpeed.savedWorking then
+                self:changeSpeed(spec.vehicle.maxSpeed.savedWorkingToggle)
+            else
+                self:changeSpeed(spec.vehicle.maxSpeed.savedWorking)
+            end
         else
             self:changeSpeed(spec.vehicle.maxSpeed.working)
         end
     else
         if spec.vehicle.maxSpeed.savedCruise > 0 then
-            self:changeSpeed(spec.vehicle.maxSpeed.savedCruise)
+            if spec.vehicle.maxSpeed.savedCruiseToggle > 0 and spec.vehicle.targetSpeed == spec.vehicle.maxSpeed.savedCruise then
+                self:changeSpeed(spec.vehicle.maxSpeed.savedCruiseToggle)
+            else
+                self:changeSpeed(spec.vehicle.maxSpeed.savedCruise)
+            end
         else
             self:changeSpeed(spec.vehicle.maxSpeed.cruise)
         end
@@ -523,14 +533,20 @@ function DriveLever:actionEventSaveSpeed()
     if spec.vehicle.isWorking then
         if spec.vehicle.maxSpeed.savedWorking == 0 then
             spec.vehicle.maxSpeed.savedWorking = cruiseControlSpeed
+        elseif spec.vehicle.maxSpeed.savedWorkingToggle == 0 and spec.vehicle.maxSpeed.savedWorking > 0 then
+            spec.vehicle.maxSpeed.savedWorkingToggle = cruiseControlSpeed
         else
             spec.vehicle.maxSpeed.savedWorking = 0
+            spec.vehicle.maxSpeed.savedWorkingToggle = 0
         end
     else
         if spec.vehicle.maxSpeed.savedCruise == 0 then
             spec.vehicle.maxSpeed.savedCruise = cruiseControlSpeed
+        elseif spec.vehicle.maxSpeed.savedCruiseToggle == 0 and spec.vehicle.maxSpeed.savedCruise > 0 then
+            spec.vehicle.maxSpeed.savedCruiseToggle = cruiseControlSpeed
         else
             spec.vehicle.maxSpeed.savedCruise = 0
+            spec.vehicle.maxSpeed.savedCruiseToggle = 0
         end
     end
     --self:debug(spec.vehicle.maxSpeed)
@@ -555,8 +571,14 @@ function DriveLever:onDraw()
         setTextBold(true)
 
         local maxSpeedText = spec.vehicle.maxSpeed.savedCruise > 0 and spec.vehicle.maxSpeed.savedCruise or spec.vehicle.maxSpeed.cruise
+        if spec.vehicle.maxSpeed.savedCruiseToggle > 0 then
+            maxSpeedText = tostring(maxSpeedText) .. ".." .. tostring(spec.vehicle.maxSpeed.savedCruiseToggle)
+        end
         if spec.vehicle.isWorking then
             maxSpeedText = spec.vehicle.maxSpeed.savedWorking > 0 and spec.vehicle.maxSpeed.savedWorking or spec.vehicle.maxSpeed.working
+            if spec.vehicle.maxSpeed.savedWorkingToggle > 0 then
+                maxSpeedText = tostring(maxSpeedText) .. ".." .. tostring(spec.vehicle.maxSpeed.savedWorkingToggle)
+            end
             setTextColor(0, 0.68, 0.2, 1)
         else
             setTextColor(0.000300, 0.564700, 0.982200, 1)

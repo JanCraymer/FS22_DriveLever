@@ -572,12 +572,12 @@ function DriveLever:onDraw()
 
         local maxSpeedText = spec.vehicle.maxSpeed.savedCruise > 0 and spec.vehicle.maxSpeed.savedCruise or spec.vehicle.maxSpeed.cruise
         if spec.vehicle.maxSpeed.savedCruiseToggle > 0 then
-            maxSpeedText = tostring(maxSpeedText) .. ".." .. tostring(spec.vehicle.maxSpeed.savedCruiseToggle)
+            maxSpeedText = tostring(maxSpeedText) .. "/" .. tostring(spec.vehicle.maxSpeed.savedCruiseToggle)
         end
         if spec.vehicle.isWorking then
             maxSpeedText = spec.vehicle.maxSpeed.savedWorking > 0 and spec.vehicle.maxSpeed.savedWorking or spec.vehicle.maxSpeed.working
             if spec.vehicle.maxSpeed.savedWorkingToggle > 0 then
-                maxSpeedText = tostring(maxSpeedText) .. ".." .. tostring(spec.vehicle.maxSpeed.savedWorkingToggle)
+                maxSpeedText = tostring(maxSpeedText) .. "/" .. tostring(spec.vehicle.maxSpeed.savedWorkingToggle)
             end
             setTextColor(0, 0.68, 0.2, 1)
         else

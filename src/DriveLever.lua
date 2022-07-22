@@ -220,7 +220,7 @@ function DriveLever:onUpdate(dt)
                                     newSpeed = math.floor(lastSpeed)
                                 else
                                     local speedChange = calculateSpeedChangeStep(spec.input.forward.value)
-                                    newSpeed = spec.vehicle.targetSpeed + speedChange
+                                    newSpeed = math.floor(lastSpeed) + speedChange
                                 end
 
                                 if newSpeed - lastSpeed > spec.vehicle.maxSpeedAdvance then
@@ -238,7 +238,7 @@ function DriveLever:onUpdate(dt)
                                 newSpeed = math.floor(lastSpeed)
                             else
                                 local speedChange = calculateSpeedChangeStep(spec.input.backward.value)
-                                newSpeed = spec.vehicle.targetSpeed - speedChange
+                                newSpeed = math.floor(lastSpeed) - speedChange
                             end
 
                             if newSpeed > lastSpeed then

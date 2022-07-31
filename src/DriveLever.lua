@@ -84,7 +84,7 @@ function DriveLever:onLoad(savegame)
     spec.input.toMax.deadzone = 0.3
 
     spec.input.delay = {}
-    spec.input.delay.value = 250
+    spec.input.delay.value = 200
     spec.input.delay.multiplier = 1
     spec.input.delay.current = 0
 
@@ -235,15 +235,17 @@ function DriveLever:onUpdate(dt)
                             -- change speed
                             local newSpeed = 0
                             if not spec.vehicle.isStopped and self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF then
-                                newSpeed = math.floor(lastSpeed)
+                                newSpeed = lastSpeed
                             else
                                 local speedChange = calculateSpeedChangeStep(spec.input.backward.value)
-                                newSpeed = math.ceil(lastSpeed) - speedChange
+                                newSpeed = lastSpeed - speedChange
                             end
 
                             if newSpeed > lastSpeed then
-                                newSpeed = math.floor(lastSpeed)
+                                newSpeed = lastSpeed
                             end
+
+                            newSpeed = math.floor(newSpeed)
 
                             self:changeSpeed(newSpeed)
                         end

@@ -387,6 +387,10 @@ end
 function DriveLever:changeDirection(direction)
     local motor = self.spec_motorized.motor
 
+    if direction ~= nil and ((direction > 0 and motor.currentDirection > 0) or (direction < 0 and motor.currentDirection < 0)) then
+        return -- prevent unnecessary sending of events
+    end
+
     if direction == nil then
         MotorGearShiftEvent.sendEvent(self, MotorGearShiftEvent.TYPE_DIRECTION_CHANGE)
     else
@@ -492,13 +496,12 @@ function DriveLever:actionEventChangeSpeed(actionName, inputValue, callbackState
     end
 
     if spec.input.autoDirectionEnabled then
-        if spec.vehicle.isStopped and spec.input.forward.enabled and spec.input.backward.enabled then
+        if (spec.vehicle.isStopped or self:getCruiseControlState() == Drivable.CRUISECONTROL_STATE_OFF) and spec.input.forward.enabled and spec.input.backward.enabled then
             self:changeDirection(inputValue)
         end
 
         local motor = self.spec_motorized.motor
-        local direction = motor.currentDirection
-        inputValue = inputValue * direction
+        inputValue = inputValue * motor.currentDirection
     end
 
     if inputValue > 0 then

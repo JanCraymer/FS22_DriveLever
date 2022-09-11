@@ -58,6 +58,7 @@ function DriveLever:onLoad(savegame)
     spec.input = {}
     spec.input.changed = false
     spec.input.useFrontloaderAxes = true
+    spec.input.autoDirectionEnabled = true
 
     spec.input.forward = {}
     spec.input.forward.value = 0
@@ -122,6 +123,7 @@ function DriveLever:loadConfigXml(fileName)
     spec.input.backward.threshold = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.backwardThreshold"), spec.input.backward.threshold)
     spec.input.toMax.deadzone = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.toMaxDeadzone"), spec.input.toMax.deadzone)
     spec.input.changeDirection.deadzone = Utils.getNoNil(getXMLFloat(xmlFile, "DriveLever.changeDirectionDeadzone"), spec.input.changeDirection.deadzone)
+    spec.input.autoDirectionEnabled = Utils.getNoNil(getXMLBool(xmlFile, "DriveLever.autoDirectionEnabled"), spec.input.autoDirectionEnabled)
 
     delete(xmlFile)
 
@@ -145,6 +147,7 @@ function DriveLever:saveConfigXml(fileName)
     setXMLFloat(xmlFile, "DriveLever.backwardThreshold", spec.input.backward.threshold)
     setXMLFloat(xmlFile, "DriveLever.toMaxDeadzone", spec.input.toMax.deadzone)
     setXMLFloat(xmlFile, "DriveLever.changeDirectionDeadzone", spec.input.changeDirection.deadzone)
+    setXMLBool(xmlFile, "DriveLever.autoDirectionEnabled", spec.input.autoDirectionEnabled)
     saveXMLFile(xmlFile)
 
     delete(xmlFile)
@@ -486,6 +489,16 @@ function DriveLever:actionEventChangeSpeed(actionName, inputValue, callbackState
 
     if spec.input.useFrontloaderAxes then
         inputValue = -inputValue
+    end
+
+    if spec.input.autoDirectionEnabled then
+        if spec.vehicle.isStopped and spec.input.forward.enabled and spec.input.backward.enabled then
+            self:changeDirection(inputValue)
+        end
+
+        local motor = self.spec_motorized.motor
+        local direction = motor.currentDirection
+        inputValue = inputValue * direction
     end
 
     if inputValue > 0 then
